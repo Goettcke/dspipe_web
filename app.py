@@ -8,7 +8,8 @@ db = SQLAlchemy(app)
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
+    dataset_name = db.Column(db.String(200), nullable=False)
+    per_un = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -18,9 +19,9 @@ class Todo(db.Model):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
-        task_content = request.form['content']
-        new_task = Todo(content=task_content)
-
+        dataset_name = request.form['dataset_name']
+        percent_unlabelled = request.form['percent_unlabelled']
+        new_task = Todo(dataset_name=dataset_name, per_un=percent_unlabelled)
         try:
             db.session.add(new_task)
             db.session.commit()
@@ -49,8 +50,8 @@ def update(id):
     task = Todo.query.get_or_404(id)
 
     if request.method == 'POST':
-        task.content = request.form['content']
-
+        task.dataset_name = request.form['dataset_name']
+        task.per_un = request.form['percent_unlabelled']
         try:
             db.session.commit()
             return redirect('/')
