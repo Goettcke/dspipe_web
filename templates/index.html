@@ -14,6 +14,7 @@
         <tr>
             <th>Dataset</th>
             <th>Percent Unlabelled</th>
+            <th>Number of samples</th>
             <th>Added</th>
             <th>Actions</th>
         </tr>
@@ -21,6 +22,7 @@
             <tr>
                 <td>{{ task.dataset_name }}</td>
                 <td>{{ task.per_un }}</td>
+                <td>{{ task.number_of_samples }}</td>
                 <td>{{ task.date_created.date() }}</td>
                 <td>
                     <a href="/delete/{{task.id}}">Delete</a>
@@ -36,6 +38,7 @@
         <form action="/" method="POST">
             <input type="text" name="dataset_name" id="dataset_name">
             <input type="text" name="percent_unlabelled" id="percent_unlabelled">
+            <input type="text" name="number_of_samples" id="number_of_samples">
             <input type="submit" value="Add Task">
         </form>
     </div>

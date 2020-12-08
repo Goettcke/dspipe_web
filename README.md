@@ -51,3 +51,15 @@ The outcome of the project will be:
 * source code and configuration detailing the deployment pipeline
 * a final report of 15 pages describing the application following the academic
   writing conventions and the LNCS style.
+  
+ 
+# Development 
+## Commands 
+1. To run the website run ```python app.py``` 
+
+## Technologies 
+In this project the primary programming language is ***Python*** and the noteworthy techonologies
+and intergrations are: 
+1. Flask 
+2. SQLALCHEMY 
+
