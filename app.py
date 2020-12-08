@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from ds_pipe.datasets.dataset_loader import Dataset_Collections
 
 db_name = "test.db"
 app = Flask(__name__)
@@ -41,7 +42,10 @@ def index():
 
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
-        return render_template('index.html', tasks=tasks)
+        dc = Dataset_Collections()
+        datasets = dc.keel_datasets() + dc.chapelle_datasets()
+        dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
+        return render_template('index.html', tasks=tasks, dataset_meta=dataset_meta_information)
 
 
 @app.route('/delete/<int:id>')
