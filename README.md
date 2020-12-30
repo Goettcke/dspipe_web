@@ -56,6 +56,7 @@ The outcome of the project will be:
 # Development 
 ## Commands 
 1. To run the website run ```python app.py``` 
+2. Go to ```http://127.0.0.1:5000/```
 
 ## Technologies 
 In this project the primary programming language is ***Python*** and the noteworthy techonologies
