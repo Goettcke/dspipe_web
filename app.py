@@ -3,6 +3,10 @@ from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from ds_pipe.datasets.dataset_loader import Dataset_Collections
+from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
+from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
+
+
 
 db_name = "test.db"
 app = Flask(__name__)
@@ -18,7 +22,7 @@ class Todo(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return f"<Task {self.dataset_name}>"
 
 
 if not os.path.exists(db_name):
@@ -59,6 +63,7 @@ def delete(id):
     except:
         return 'There was a problem deleting that task'
 
+
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     task = Todo.query.get_or_404(id)
@@ -76,6 +81,45 @@ def update(id):
 
     else:
         return render_template('update.html', task=task)
+
+
+@app.route('/run/', methods=['POST'])
+def run():
+    """
+    The most basic runner, which starts chewing through the database until it is empty.
+    TODO 1. Allow different quality measures
+    TODO 2. Allow different classifiers
+    :return: None
+    """
+    if request.method == 'POST':
+        error_log = "output/log.txt"
+        tasks = Todo.query.order_by(Todo.date_created).all()
+        # Task extracted - now it's time for running the stuff!
+        dc = Dataset_Collections()
+        dc_full_dict = dc.get_full_dictionary()
+        for task in tasks:
+            if task.dataset_name in dc_full_dict.keys():
+                algorithm = kNN_LDP(n_neighbors=10)
+                results = random_sampling_evaluator(dc_full_dict[task.dataset_name], algorithm,
+                                                    percentage_labelled=100 - task.per_un,
+                                                    number_of_samples=task.number_of_samples,
+                                                    quality_measure="accuracy")
+                print(results)
+                f = open(f"output/results_{task.per_un}_{task.number_of_samples}.csv", "a+")
+                result_string = ", ".join([str(result) for result in results])
+                f.write(f"{task.dataset_name}, {result_string}\n")
+                f.close()
+            else:
+                f = open(error_log, "a+")
+                f.write(f"{task.dataset_name} not in datasets,{datetime.utcnow()}\n")
+                f.close()
+            delete(task.id)
+        print("No more jobs in queue")
+        return redirect('/')
+
+    else:
+        return "There was an with the backend - cannot run the tasks"
+
 
 
 if __name__ == "__main__":
