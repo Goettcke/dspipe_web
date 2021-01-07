@@ -63,4 +63,6 @@ In this project the primary programming language is ***Python*** and the notewor
 and intergrations are: 
 1. Flask 
 2. SQLALCHEMY 
+3. NGINX for hosting the production server. To host a Flask application through NGINX follow:
+https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
 
