@@ -3,13 +3,12 @@ File intended too loop through the database of tasks, and run the work in the qu
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app import Todo, delete
+from main import Todo, delete
 from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
 from datetime import datetime
 
-# TODO 1: Create a lookup mechanism, that extracts jobs from the queue in test-db in the order of least recent.
 # TODO 2: Verify that the job makes sense, and add it to the run queue.
 #  The rabbit MQ stream with microservices can be defined at a later point.
 # TODO 3: Log the result of the run after the run is over in a database system, that handles concurrent inserts.

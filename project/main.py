@@ -1,36 +1,16 @@
 import os
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
+from project.models import Todo
+from . import db
 
+main = Blueprint('main', __name__)
 
-
-db_name = "test.db"
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///"+db_name
-db = SQLAlchemy(app)
-
-
-class Todo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    dataset_name = db.Column(db.String(200), nullable=False)
-    per_un = db.Column(db.Integer, nullable=False)
-    number_of_samples = db.Column(db.Integer, nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f"<Task {self.dataset_name}>"
-
-
-if not os.path.exists(db_name):
-    print("\n* ds_pipe web notification : Automatically created the test.db file\n")
-    db.create_all()  # Creating the database, if it doesn't exist.
-
-
-@app.route('/', methods=['POST', 'GET'])
+@main.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
         dataset_name = request.form['dataset_name']
@@ -52,7 +32,7 @@ def index():
         return render_template('index.html', tasks=tasks, dataset_meta=dataset_meta_information)
 
 
-@app.route('/delete/<int:id>')
+@main.route('/delete/<int:id>')
 def delete(id):
     task_to_delete = Todo.query.get_or_404(id)
 
@@ -64,7 +44,7 @@ def delete(id):
         return 'There was a problem deleting that task'
 
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
+@main.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     task = Todo.query.get_or_404(id)
 
@@ -83,7 +63,7 @@ def update(id):
         return render_template('update.html', task=task)
 
 
-@app.route('/run/', methods=['POST'])
+@main.route('/run/', methods=['POST'])
 def run():
     """
     The most basic runner, which starts chewing through the database until it is empty.
@@ -120,7 +100,9 @@ def run():
     else:
         return "There was an with the backend - cannot run the tasks"
 
+@main.route('/profile')
+def profile(): 
+    return render_template('profile.html')
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
