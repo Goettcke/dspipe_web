@@ -1,50 +1,36 @@
 import os
+from time import sleep
 from flask import Flask, render_template, url_for, request, redirect, Blueprint
+from flask_login import current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
+
 from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
 from project.models import Todo
-from . import db
+from project import db
 
 main = Blueprint('main', __name__)
 
-@main.route('/', methods=['POST', 'GET'])
-def index():
-    if request.method == 'POST':
-        dataset_name = request.form['dataset_name']
-        percent_unlabelled = request.form['percent_unlabelled']
-        number_of_samples = request.form['number_of_samples']
-        new_task = Todo(dataset_name=dataset_name, per_un=percent_unlabelled, number_of_samples=number_of_samples)
-        try:
-            db.session.add(new_task)
-            db.session.commit()
-            return redirect('/')
-        except:
-            return 'There was an issue adding your task'
-
-    else:
-        tasks = Todo.query.order_by(Todo.date_created).all()
-        dc = Dataset_Collections()
-        datasets = dc.keel_datasets() + dc.chapelle_datasets()
-        dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
-        return render_template('index.html', tasks=tasks, dataset_meta=dataset_meta_information)
 
 
 @main.route('/delete/<int:id>')
+@login_required
 def delete(id):
     task_to_delete = Todo.query.get_or_404(id)
 
     try:
         db.session.delete(task_to_delete)
         db.session.commit()
-        return redirect('/')
+        return redirect(url_for('main.profile'))
     except:
         return 'There was a problem deleting that task'
 
 
 @main.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
     task = Todo.query.get_or_404(id)
 
@@ -54,7 +40,7 @@ def update(id):
         task.number_of_samples = request.form['number_of_samples']
         try:
             db.session.commit()
-            return redirect('/')
+            return redirect(url_for('main.profile'))
         except Exception as e:
             print(e)
             return 'There was an issue updating your task'
@@ -95,14 +81,42 @@ def run():
                 f.close()
             delete(task.id)
         print("No more jobs in queue")
-        return redirect('/')
+        return redirect(url_for('main.profile'))
 
     else:
         return "There was an with the backend - cannot run the tasks"
 
-@main.route('/profile')
+@main.route('/profile', methods=['POST', 'GET'])
+@login_required
 def profile(): 
-    return render_template('profile.html')
+    # TODO find the jobs that are particular for that the current user name. 
+    # TODO Add a navbar to this page containing Schedule, Results, Logout 
+    
+    print("Blemar") 
+    if request.method == 'POST':
+        dataset_name = request.form['dataset_name']
+        percent_unlabelled = request.form['percent_unlabelled']
+        number_of_samples = request.form['number_of_samples']
+        print("Blarno") 
+        new_task = Todo(dataset_name=dataset_name, per_un=percent_unlabelled, number_of_samples=number_of_samples, user_id=current_user.id)
+        print(new_task)
+        try:
+            db.session.add(new_task)
+            db.session.commit()
+            #render_template('example_profile_page.html', name=current_user.name) 
+            return redirect(url_for('main.profile'))
+        except:
+            return 'There was an issue adding your task'
+
+    else:
+        tasks = Todo.query.order_by(Todo.date_created).all()
+        dc = Dataset_Collections()
+        datasets = dc.keel_datasets() + dc.chapelle_datasets()
+        dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
+        return render_template('profile.html', name=current_user.name, tasks=tasks, dataset_meta=dataset_meta_information)
 
 
-
+@main.route('/results', methods=['GET'])
+@login_required
+def results(): 
+    return render_template('results.html')

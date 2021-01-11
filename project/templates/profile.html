@@ -1,7 +1,82 @@
-{% extends "base_login.html" %}
+{% extends 'base.html' %}
 
-{% block content %}
-<h1 class="title">
-  Welcome, Anthony!
-</h1>
+{% block head %}
+<title>ds_pipe</title>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1 style="text-align: center">DS_Pipe Task Scheduler</h1>
+    {% if tasks|length < 1 %}
+    <h4 style="text-align: center">There are no tasks. Create one below!</h4>
+    {% else %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Dataset</th>
+                <th>Percent Unlabelled</th>
+                <th>Number of samples</th>
+                <th>Added</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        {% for task in tasks %}
+            <tr>
+                <td>{{ task.dataset_name }}</td>
+                <td>{{ task.per_un }}</td>
+                <td>{{ task.number_of_samples }}</td>
+                <td>{{ task.date_created.date() }}</td>
+                <td>
+                    <a href="/delete/{{task.id}}">Delete</a>
+                    <br>
+                    <a href="/update/{{task.id}}">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <div class="row">
+
+        <div class="col-">
+            <form class="form-inline" action="/profile" method="POST">
+                <label for="dataset_name" class="form-label"></label>
+                <input type="text" class="form-control" name="dataset_name" id="dataset_name" placeholder="Dataset">
+                <label for="percent_unlabelled" class="form-label"></label>
+                <input type="text" class="form-control" name="percent_unlabelled" id="percent_unlabelled" placeholder="Percent Unlabelled">
+                <label for="number_of_samples" class="form-label"></label>
+                <input type="text" class="form-control"  name="number_of_samples" id="number_of_samples" placeholder="Number of Samples">
+                <button type="submit" class="btn btn-primary" value="Add Task">Schedule Task</button>
+            </form>
+        </div>
+
+        <div class="col-sm">
+        <form action="/run/" method="POST">
+            <button type="submit" class="btn btn-success" value="Run">Run</button>
+        </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <table class="table table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Dataset</th>
+            <th>Number of Attributes</th>
+            <th>Number of Points</th>
+        </tr>
+        </thead>
+        {% for dataset_name, dim, cardinality in dataset_meta%}
+        <tr>
+            <td>{{ dataset_name }}</td>
+            <td>{{ dim }}</td>
+            <td>{{ cardinality }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</div>
 {% endblock %}

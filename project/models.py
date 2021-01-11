@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from sqlalchemy import ForeignKey
 from . import db
 from datetime import datetime
 
@@ -8,6 +9,9 @@ class Todo(db.Model):
     per_un = db.Column(db.Integer, nullable=False)
     number_of_samples = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, ForeignKey("user.id", ondelete="CASCADE"))
+
+
     # This user id should be setup 
     #user_id = db.Column(db.integer, models.ForeignKey("app.Model", verbose_name=_(""), on_delete=models.CASCADE))
 
