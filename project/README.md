@@ -1,7 +1,7 @@
 # Project Description Jonatan / DM874 Fall 2020
 
 ## Project
-In this project a minimalistic website will be created to try out some of the implementations of the ds_pipe package developed during my PhD. The package includes algorithhms and datasets from the semi-supervised learning and imbalanced classification fields. 
+In this project a minimalistic website will be created to try out some of the implementations of the ds_pipe package developed during my PhD. The package includes algorithms and datasets from the semi-supervised learning and imbalanced classification fields. 
 
 ## User 
 **A user can**:
@@ -60,10 +60,10 @@ The outcome of the project will be:
 2. Go to ```http://127.0.0.1:5000/```
 
 ## Technologies 
-In this project the primary programming language is ***Python*** and the noteworthy techonologies
-and intergrations are: 
+In this project the primary programming language is ***Python*** and the noteworthy technologies
+and integrations are: 
 1. Flask 
 2. SQLALCHEMY 
 3. NGINX for hosting the production server. To host a Flask application through NGINX follow:
 https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
-
+4. Travis CI
