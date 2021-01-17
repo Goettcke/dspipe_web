@@ -1,4 +1,4 @@
-export FLASH_DEBUG=1
-export FLASH_ENV=development
-export FLASH_PROJECT=project
+export FLASK_DEBUG=1
+export FLASK_ENV=development
+export FLASK_PROJECT=project
 flask run
