@@ -6,6 +6,11 @@
 
 
 {% block body %}
-<h1>Blarno</h1>
+    <h1>Results</h1>
+    {% for table_ in tables %}
+    <div class="container-fluid">
+        {{table_ | safe}}
+    </div>
+    {% endfor %}
 {% endblock %}
 

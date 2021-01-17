@@ -5,15 +5,16 @@ In this project a minimalistic website will be created to try out some of the im
 
 ## User 
 **A user can**:
-* Login to the website and make a new user 
-* Login to a web interface and upload a dataset
-* View all of the datasets currently available in the package
-* Choose one of the existing algorithms in the ds_pipe package and apply it to a dataset, possibly in parallel
-* Choose one of the existing semi supervised learning algorithms from the **Scikit-Learn** library and apply it using the same interface as the algorithms from the ds_pipe package, possibly parallelizing the tasks
-* See the class assignments for each of the query points. 
-* Set percentage of unlabelled data points in the dataset
-* Set the number of random samples for empirical performance evaluation
-* See a pairplot of the class assignments
+* Login to the website and make a new user  &#x2611;
+* Login to a web interface &#x2611;
+* Upload a dataset  
+* View all of the datasets currently available in the package &#x2611;
+* Choose one of the existing algorithms in the ds_pipe package and apply it to a dataset, possibly in parallel &#x2611; Can so far only handle KNN LDP
+* Choose one of the existing semi supervised learning algorithms from the **Scikit-Learn** library and apply it using the same interface as the algorithms from the ds_pipe package, possibly parallelizing the tasks &#x2612;
+* See the class assignments for each of the query points. &#x2612;
+* Set percentage of unlabelled data points in the dataset &#x2611;
+* Set the number of random samples for empirical performance evaluation &#x2611;
+* See a pairplot of the class assignments &#x2612;
 * Evaluate the performance of the algorithm with above configuration using *accuracy*, *precision*, *recall* and *f1* quality measures. 
 * Save the results from the classification for later retrieval
 
