@@ -11,7 +11,7 @@ command-not-found==0.3
 configobj==5.0.6
 constantly==15.1.0
 crcmod==1.7
-cryptography==2.8
+cryptography==3.2
 Cython==0.29.21
 dbus-python==1.2.16
 distlib==0.3.1
