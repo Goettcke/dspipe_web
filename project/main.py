@@ -1,8 +1,7 @@
 import os
 from time import sleep
-from flask import Flask, render_template, url_for, request, redirect, Blueprint
+from flask import render_template, url_for, request, redirect, Blueprint
 from flask_login import current_user, login_required
-from flask_sqlalchemy import SQLAlchemy
 import pandas as pd 
 from datetime import datetime
 
@@ -132,3 +131,8 @@ def results():
     for table in tables: 
         print(table)
     return render_template('results.html', tables=tables)
+
+@main.route("/deploy")
+def deploy(): 
+    os.system("~/myproject/./deploy.sh")
+    return render_template("deploy.html")
