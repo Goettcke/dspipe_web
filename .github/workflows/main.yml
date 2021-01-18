@@ -53,3 +53,14 @@ jobs:
           port: ${{ secrets.PORT }}    
           user: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
+
+
+    
+      - name: 
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key:  ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: ${{ secrets.GREENBUTTON }}
