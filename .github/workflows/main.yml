@@ -35,17 +35,17 @@ jobs:
         run: |
           pip install -r requirements.txt
           pytest 
+  
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v2
-      - shell: bash
-      - name: Deploy all
-        run: | 
-          ${{ secrets.DEPLOYKEY}} > deploy_key
-          scp -i deploy_key -r /home/runner/work/dspipeweb/dspipeweb/* jonatania_gmail_com@35.198.147.40:~/myproject/test/
+      - run: mkdir -p keys/
+      - run: echo ${{ secrets.DEPLOYKEY}} > keys/deploy_key
+      - run: scp -i keys/deploy_key -r /home/runner/work/dspipeweb/dspipeweb/* jonatania_gmail_com@35.198.147.40:~/myproject/test/
+
 
 
 
