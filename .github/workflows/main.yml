@@ -39,13 +39,11 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-      - run: mkdir -p keys/
-      - run: echo ${{ secrets.DEPLOYKEY}} > keys/deploy_key
-      - run: scp -i keys/deploy_key -r /home/runner/work/dspipeweb/dspipeweb/* jonatania_gmail_com@35.198.147.40:~/myproject/test/
-
-
-
-
+    uses: horochx/deploy-via-scp@master
+    with:
+      local: /home/runner/work/*
+      remote: ${{ secrets.REMOTE }}
+      host: ${{ secrets.HOST }}
+      port: ${{ secrects.PORT }}    
+      user: ${{ secrets.USER }}
+      key: ${{ secrets.KEY }}
