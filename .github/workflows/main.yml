@@ -47,7 +47,7 @@ jobs:
       - name: deploy-via-scp
         uses: horochx/deploy-via-scp@v1.0.1
         with:
-          local: /home/runner/work/*
+          local: /home/runner/work/dspipe_web/dspipe_web/run.sh
           remote: ${{ secrets.REMOTE }}
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}    
