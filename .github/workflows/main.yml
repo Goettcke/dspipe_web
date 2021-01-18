@@ -41,11 +41,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      #- shell: bash
+      - shell: bash
       - name: Deploy all
         run: | 
           ${{ secrets.DEPLOYKEY}} > deploy_key
-          scp -r -i deploy_key /home/runner/work/dspipeweb/dspipeweb/* jonatania_gmail_com@35.198.147.40:~/myproject/test/
+          scp -i deploy_key -r /home/runner/work/dspipeweb/dspipeweb/* jonatania_gmail_com@35.198.147.40:~/myproject/test/
 
 
 
