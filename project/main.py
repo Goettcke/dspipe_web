@@ -132,7 +132,7 @@ def results():
         print(table)
     return render_template('results.html', tables=tables)
 
-@main.route("/deploy")
-def deploy(): 
-    os.system("~/myproject/./deploy.sh")
-    return render_template("deploy.html")
+@main.route("/greet")
+@login_required
+def greet(): 
+    return render_template("example_profile_page.html")
