@@ -40,7 +40,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     
-    steps: 
+    steps:
+    
+      - uses: actions/checkout@v2
+      
       - name: deploy-via-scp
         uses: horochx/deploy-via-scp@v1.0.1
         with:
