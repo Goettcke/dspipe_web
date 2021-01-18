@@ -38,12 +38,12 @@ jobs:
   
   deploy:
     needs: build
-    uses: horochx/deploy-via-scp@master
-    with:
-      local: /home/runner/work/*
-      remote: ${{ secrets.REMOTE }}
-      host: ${{ secrets.HOST }}
-      port: ${{ secrects.PORT }}    
-      user: ${{ secrets.USER }}
-      key: ${{ secrets.KEY }}
-    - run: done
+    - name: deploy-via-scp
+      uses: horochx/deploy-via-scp@v1.0.1
+      with:
+        local: /home/runner/work/*
+        remote: ${{ secrets.REMOTE }}
+        host: ${{ secrets.HOST }}
+        port: ${{ secrects.PORT }}    
+        user: ${{ secrets.USER }}
+        key: ${{ secrets.KEY }}
