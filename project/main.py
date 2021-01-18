@@ -135,4 +135,4 @@ def results():
 @main.route("/greet")
 @login_required
 def greet(): 
-    return render_template("example_profile_page.html")
+    return render_template("example_profile_page.html", name=current_user.name)
