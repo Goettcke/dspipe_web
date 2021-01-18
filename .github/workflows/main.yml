@@ -47,6 +47,6 @@ jobs:
           local: /home/runner/work/*
           remote: ${{ secrets.REMOTE }}
           host: ${{ secrets.HOST }}
-          port: ${{ secrects.PORT }}    
+          port: ${{ secrets.PORT }}    
           user: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
