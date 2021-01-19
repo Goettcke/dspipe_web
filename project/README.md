@@ -66,4 +66,29 @@ and integrations are:
 2. SQLALCHEMY 
 3. NGINX for hosting the production server. To host a Flask application through NGINX follow:
 https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
-4. Travis CI
+4. Github CI/CD
+5. Kubernetes (Microk8s)
+6. RabbitMQ 
+
+# Deployment
+## Servers
+Two servers were set up for running the project. 
+A website host server, and a Kubernetes server 
+
+
+## Kubernetes
+The Kubernetes configuration running on the Kubernetes server is the Microk8s by Canonical. 
+
+### Useful guides for Microk8s
+For registering a new local image like the plotter image the following guide is useful: 
+https://microk8s.io/docs/registry-images
+
+## RabbitMq
+### Useful guides for Rabbit
+https://www.rabbitmq.com/production-checklist.html
+https://www.rabbitmq.com/monitoring.html
+
+
+## Notes
+Useful blogs about microservices: 
+* https://www.nginx.com/blog/building-microservices-inter-process-communication/
