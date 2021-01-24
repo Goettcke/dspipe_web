@@ -137,7 +137,3 @@ def results():
 def greet(): 
     return render_template("example_profile_page.html", name=current_user.name)
 
-@main.route("/download")
-def download_file():
-    file_path = "packages/DS_Pipe-0.0.1-py3-none-any.whl.whl"
-    return send_file(file_path, as_attachment=True)
