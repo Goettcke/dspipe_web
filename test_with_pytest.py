@@ -33,3 +33,4 @@ def test_algorithm():
                                             number_of_samples=10,
                                             quality_measure="accuracy")
     assert sum(results)/len(results) > 0.9
+

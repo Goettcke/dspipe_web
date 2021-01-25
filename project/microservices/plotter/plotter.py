@@ -17,7 +17,7 @@ print(args)
 dataset_name = args.dataset_name
 
 if args.user_name == "": 
-    print("What an asshole")
+    print("Hehe funny bunny")
 else: 
     print(args.user_name)
 
