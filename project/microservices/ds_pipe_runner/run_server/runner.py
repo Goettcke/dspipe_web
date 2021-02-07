@@ -32,32 +32,32 @@ dc = Dataset_Collections()
 dc_full_dict = dc.get_full_dictionary()
 
 # Check if the user folder is created:
-user_folder = f"/app/output/results/{args.user_id}" 
+user_folder = f"/app/output/results/{args.user_id}"
 
-if not os.path.exists(user_folder): 
+if not os.path.exists(user_folder):
     os.makedirs(user_folder)
 
 
-if args.algorithm == "knn_ldp": 
+if args.algorithm == "knn_ldp":
     algorithm = kNN_LDP(n_neighbors = args.n_neighbors)
-    f = open(f"{user_folder}/pl-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_n-{args.n_neighbors}.csv", "a+")
+    f = open(f"{user_folder}/knn_ldp-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_n-{args.n_neighbors}.csv", "a+")
 
-elif args.algorithm == "lp": 
+elif args.algorithm == "lp":
     if args.kernel == "rbf":
         algorithm = LabelPropagation(gamma=args.gamma)
-        f = open(f"{user_folder}/pl-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_g-{args.gamma}.csv", "a+")
-    else: 
+        f = open(f"{user_folder}/lp-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_g-{args.gamma}.csv", "a+")
+    else:
         algorithm = LabelPropagation(n_neighbors=args.n_neighbors)
-        f = open(f"{user_folder}/pl-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_n-{args.n_neighbors}.csv", "a+")
+        f = open(f"{user_folder}/lp-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_n-{args.n_neighbors}.csv", "a+")
 
-elif args.algorithm == "ls": 
+elif args.algorithm == "ls":
     if args.kernel == "rbf":
         algorithm = LabelSpreading(gamma=args.gamma, alpha=args.alpha)
-        f = open(f"{user_folder}/pl-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_g-{args.gamma}_a-{args.alpha}.csv", "a+")
-    else: 
+        f = open(f"{user_folder}/ls-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_g-{args.gamma}_a-{args.alpha}.csv", "a+")
+    else:
         algorithm = LabelSpreading(n_neighbors=args.n_neighbors)
-        f = open(f"{user_folder}/pl-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_n-{args.n_neighbors}.csv", "a+")
-else: 
+        f = open(f"{user_folder}/ls-{args.percent_labelled}_ns-{args.number_of_samples}_q-{args.quality_measure}_n-{args.n_neighbors}.csv", "a+")
+else:
     raise Exception("Unsupported algorithm - knn_ldp, lp and ls is currently the only supported algorithms")
 
 

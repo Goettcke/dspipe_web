@@ -8,7 +8,7 @@ channel.queue_declare(queue="task_queue", durable=True)
 
 #message = ' '.join(sys.argv[1:]) or "Hello Word!"
 # The test user is -1
-message = json.dumps({"user_id":-1,
+message = json.dumps({"user_id":42,
     "algorithm": "knn_ldp",
     "number_of_samples" : 5,
     "dataset_name":"appendicitis",
