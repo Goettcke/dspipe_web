@@ -124,7 +124,7 @@ def profile():
 @main.route('/results', methods=['GET'])
 @login_required
 def results():
-    user_folder = f"output/results/{current_user.id}/"
+    user_folder = f"results/{current_user.id}/"
     result_files = os.listdir(user_folder)
     tables = []
     all_parameters = []
