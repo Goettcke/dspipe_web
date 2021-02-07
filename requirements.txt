@@ -2,7 +2,7 @@ attrs==20.3.0
 click==7.1.2
 Cython==0.29.21
 DateTime==4.3
-DS-Pipe @ file:packages/DS_Pipe-0.0.1-py3-none-any.whl
+packages/DS_Pipe-0.0.1-py3-none-any.whl
 Flask==1.1.2
 Flask-Login==0.5.0
 Flask-SQLAlchemy==2.4.4
