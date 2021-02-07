@@ -125,6 +125,14 @@ def profile():
 @login_required
 def results():
     user_folder = f"results/{current_user.id}/"
+    try:
+        f = open("environment.txt", "r")
+        environment = f.read()
+        print(environment)
+        if environment == "production":
+            os.system("./transfer_results.sh")
+    except:
+        print(f"Environment is : {environment}")
     result_files = os.listdir(user_folder)
     tables = []
     all_parameters = []
