@@ -2,7 +2,7 @@ import os
 from time import sleep
 from flask import render_template, url_for, request, redirect, Blueprint, send_file
 from flask_login import current_user, login_required
-import pandas as pd 
+import pandas as pd
 from datetime import datetime
 
 
@@ -11,6 +11,7 @@ from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
 from project.models import Todo
 from project import db
+from project.utils import get_html_table
 
 main = Blueprint('main', __name__)
 
@@ -66,8 +67,8 @@ def run():
         dc_full_dict = dc.get_full_dictionary()
 
         # Check if the user folder is created:
-        user_folder = f"output/results/{current_user.id}" 
-        if not os.path.exists(user_folder): 
+        user_folder = f"output/results/{current_user.id}"
+        if not os.path.exists(user_folder):
             os.makedirs(user_folder)
 
         for task in tasks:
@@ -95,10 +96,10 @@ def run():
 
 @main.route('/profile', methods=['POST', 'GET'])
 @login_required
-def profile(): 
-    # TODO find the jobs that are particular for that the current user name. 
-    # TODO Add a navbar to this page containing Schedule, Results, Logout 
-    
+def profile():
+    # TODO find the jobs that are particular for that the current user name.
+    # TODO Add a navbar to this page containing Schedule, Results, Logout
+
     if request.method == 'POST':
         dataset_name = request.form['dataset_name']
         percent_unlabelled = request.form['percent_unlabelled']
@@ -107,7 +108,7 @@ def profile():
         try:
             db.session.add(new_task)
             db.session.commit()
-            #render_template('example_profile_page.html', name=current_user.name) 
+            #render_template('example_profile_page.html', name=current_user.name)
             return redirect(url_for('main.profile'))
         except:
             return 'There was an issue adding your task'
@@ -125,15 +126,21 @@ def profile():
 def results():
     user_folder = f"output/results/{current_user.id}/"
     result_files = os.listdir(user_folder)
-    user_results = [pd.read_csv(user_folder + result_file) for result_file in result_files]
-
-    tables = [result.to_html(classes = "table table-striped", header=True, escape=False) for result in user_results] 
-    for table in tables: 
-        print(table)
+    tables = []
+    all_parameters = []
+    for result_file in result_files:
+        #parameters = get_result_parameters(result_file)
+        #df = pd.read_csv(user_folder + result_file, header=0, names=["algorithm", "dataset"])
+        #table = df.to_html(classes = "table table-striped", header=False)
+        #print(table)
+        tables.append(get_html_table(user_folder + result_file))
+        #    tables = [result.to_html(classes = "table table-striped", header=True, escape=False) for result in user_results]
+        #    for table in tables:
+        #        print(table)
     return render_template('results.html', tables=tables)
 
 @main.route("/greet")
 @login_required
-def greet(): 
+def greet():
     return render_template("example_profile_page.html", name=current_user.name)
 
