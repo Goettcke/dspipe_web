@@ -16,6 +16,7 @@ def get_html_table(result_file_path):
     parameters = get_result_parameters(result_file)
     algorithm = parameters['alg']
     div_top = "<div class = 'container'>\n"
+
     if algorithm == "knnldp":
         table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>n neighbors</th> </tr></thead>"
         table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['n']}</td> </tbody></table> </div> \n"
@@ -27,12 +28,14 @@ def get_html_table(result_file_path):
         heading = table_head + table_content
 
 
-
     elif algorithm == "lp":
         table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>gamma</th> </tr></thead>"
         table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['g']} </td>  </tbody></table> </div> \n"
         heading = table_head + table_content
 
-    df = pd.read_csv(result_file_path, header=None, names=["algorithm", "dataset"])
-    table = df.to_html(classes = "table table-striped", header=False)
+    df = pd.read_csv(result_file_path, header=None, names = list(range(int(parameters['ns']))))
+    #df.columns = ["algorithm", "dataset"] + [str(x) for x in list(range(df.shape[0]-2))]
+    df = df.multiply(100)
+    df = df.round(2)
+    table = df.to_html(classes = "table table-striped", header=True)
     return div_top + heading + "<div class='row'>\n" + table + "</div>\n</div> <hr/>\n"
