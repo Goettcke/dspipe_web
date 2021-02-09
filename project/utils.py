@@ -23,14 +23,22 @@ def get_html_table(result_file_path):
         heading = table_head + table_content
 
     elif algorithm == "ls" :
-        table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>gamma</th> <th scope='col'>alpha</th> </tr></thead>"
-        table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['g']} </td> <td>{parameters['a']} </td> </tbody></table> </div> \n"
+        if 'g' in parameters.keys(): # Here we are checking which kernel was used in the configuration of the classifier
+            table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>gamma</th> <th scope='col'>alpha</th> </tr></thead>"
+            table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['g']} </td> <td>{parameters['a']} </td> </tbody></table> </div> \n"
+        elif 'n' in parameters.keys():
+            table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>n neighbors</th> </tr></thead>"
+            table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['n']} </td> </tbody></table> </div> \n"
         heading = table_head + table_content
 
-
     elif algorithm == "lp":
-        table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>gamma</th> </tr></thead>"
-        table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['g']} </td>  </tbody></table> </div> \n"
+        if 'g' in parameters.keys(): # Here we are checking which kernel was used in the configuration of the classifier
+            table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>gamma</th> </tr></thead>"
+            table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['g']} </td>  </tbody></table> </div> \n"
+        elif 'n' in parameters.keys():
+            table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>n neighbors</th> </tr></thead>"
+            table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['n']} </td>  </tbody></table> </div> \n"
+
         heading = table_head + table_content
 
     df = pd.read_csv(result_file_path, header=None, names = list(range(int(parameters['ns']))))

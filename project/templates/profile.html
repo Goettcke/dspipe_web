@@ -13,7 +13,9 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Algorithm</th>
                 <th>Dataset</th>
+                <th>Quality measure</th>
                 <th>Percent Unlabelled</th>
                 <th>Number of samples</th>
                 <th>Added</th>
@@ -22,8 +24,10 @@
         </thead>
         {% for task in tasks %}
             <tr>
+                <td>{{ task.algorithm }}</td>
                 <td>{{ task.dataset_name }}</td>
-                <td>{{ task.per_un }}</td>
+                <td>{{ task.q_measure }}</td>
+                <td>{{ task.per }}</td>
                 <td>{{ task.number_of_samples }}</td>
                 <td>{{ task.date_created.date() }}</td>
                 <td>
@@ -39,12 +43,24 @@
 
         <div class="col-">
             <form class="form-inline" action="/profile" method="POST">
+
+                <label for="algorithm" class="form-label"></label>
+                <input type="text" class="form-control" name="algorithm" id="algorithm" placeholder="Algorithm">
+
+                <label for="q_measure" class="form-label"></label>
+                <input type="text" class="form-control" name="q_measure" id="q_measure" placeholder="Quality measure">
+
+
+
                 <label for="dataset_name" class="form-label"></label>
                 <input type="text" class="form-control" name="dataset_name" id="dataset_name" placeholder="Dataset">
-                <label for="percent_unlabelled" class="form-label"></label>
-                <input type="text" class="form-control" name="percent_unlabelled" id="percent_unlabelled" placeholder="Percent Unlabelled">
+
+                <label for="percent_labelled" class="form-label"></label>
+                <input type="text" class="form-control" name="percent_labelled" id="percent_labelled" placeholder="Percent labelled">
+
                 <label for="number_of_samples" class="form-label"></label>
                 <input type="text" class="form-control"  name="number_of_samples" id="number_of_samples" placeholder="Number of Samples">
+
                 <button type="submit" class="btn btn-primary" value="Add Task">Schedule Task</button>
             </form>
         </div>

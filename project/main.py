@@ -1,4 +1,5 @@
 import os
+import pika, sys, json
 from time import sleep
 from flask import render_template, url_for, request, redirect, Blueprint, send_file
 from flask_login import current_user, login_required
@@ -36,9 +37,14 @@ def update(id):
     task = Todo.query.get_or_404(id)
 
     if request.method == 'POST':
+        task.algorithm = request.form['algorithm']
+        task.q_measure = request.form['q_measure']
         task.dataset_name = request.form['dataset_name']
-        task.per_un = request.form['percent_unlabelled']
+        task.per = request.form['percent_labelled']
         task.number_of_samples = request.form['number_of_samples']
+
+        #TODO check if this format can run before submitting it. Return an error page with instructions on what you can run.
+
         try:
             db.session.commit()
             return redirect(url_for('main.profile'))
@@ -63,26 +69,36 @@ def run():
         error_log = "output/log.txt"
         tasks = Todo.query.filter(Todo.user_id == current_user.id).order_by(Todo.date_created).all()
         # Task extracted - now it's time for running the stuff!
-        dc = Dataset_Collections()
+        dc = Dataset_Collections() # This should really be removed for a snappier website
         dc_full_dict = dc.get_full_dictionary()
-
-        # Check if the user folder is created:
-        user_folder = f"output/results/{current_user.id}"
-        if not os.path.exists(user_folder):
-            os.makedirs(user_folder)
 
         for task in tasks:
             if task.dataset_name in dc_full_dict.keys():
-                algorithm = kNN_LDP(n_neighbors=10)
-                results = random_sampling_evaluator(dc_full_dict[task.dataset_name], algorithm,
-                                                    percentage_labelled=100 - task.per_un,
-                                                    number_of_samples=task.number_of_samples,
-                                                    quality_measure="accuracy")
-                print(results)
-                f = open(f"{user_folder}/{task.per_un}_{task.number_of_samples}.csv", "a+")
-                result_string = ", ".join([str(result) for result in results])
-                f.write(f"{task.dataset_name}, {result_string}\n")
-                f.close()
+                connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+
+                channel = connection.channel()
+                channel.queue_declare(queue="task_queue", durable=True)
+
+                message = json.dumps({"user_id": current_user.id,
+                                      "algorithm": task.algorithm,
+                                      "number_of_samples": task.number_of_samples,
+                                      "dataset_name": task.dataset_name,
+                                      "n_neighbors":10,
+                                      "quality_measure": task.q_measure,
+                                      "percent_labelled":task.per,
+                                      "alpha":0.2,
+                                      "gamma":20,
+                                      "kernel":"knn"})
+
+                channel.basic_publish(exchange="",
+                                    routing_key="task_queue",
+                                    body=message,
+                                    properties=pika.BasicProperties(
+                                    delivery_mode = 2,
+                                    ))
+                print(" [x] Sent %r " % message)
+                connection.close()
+
             else:
                 f = open(error_log, "a+")
                 f.write(f"{task.dataset_name} not in datasets,{datetime.utcnow()}\n")
@@ -97,20 +113,25 @@ def run():
 @main.route('/profile', methods=['POST', 'GET'])
 @login_required
 def profile():
-    # TODO find the jobs that are particular for that the current user name.
-    # TODO Add a navbar to this page containing Schedule, Results, Logout
-
     if request.method == 'POST':
+        algorithm = request.form['algorithm']
         dataset_name = request.form['dataset_name']
-        percent_unlabelled = request.form['percent_unlabelled']
+        q_measure = request.form['q_measure']
+        percent_labelled = request.form['percent_labelled']
         number_of_samples = request.form['number_of_samples']
-        new_task = Todo(dataset_name=dataset_name, per_un=percent_unlabelled, number_of_samples=number_of_samples, user_id=current_user.id)
+        new_task = Todo(algorithm = algorithm,
+                        q_measure = q_measure,
+                        dataset_name=dataset_name,
+                        per=percent_labelled,
+                        number_of_samples=number_of_samples,
+                        user_id=current_user.id)
         try:
             db.session.add(new_task)
             db.session.commit()
-            #render_template('example_profile_page.html', name=current_user.name)
             return redirect(url_for('main.profile'))
-        except:
+
+        except Exception as e:
+            print(e)
             return 'There was an issue adding your task'
 
     else:
@@ -118,34 +139,29 @@ def profile():
         dc = Dataset_Collections()
         datasets = dc.keel_datasets() + dc.chapelle_datasets()
         dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
-        return render_template('profile.html', name=current_user.name, tasks=tasks, dataset_meta=dataset_meta_information)
+        return render_template('profile.html', name=current_user.name, tasks=tasks, dataset_meta=dataset_meta_information, user_type=current_user.user_type)
 
 
 @main.route('/results', methods=['GET'])
 @login_required
 def results():
-    user_folder = f"results/{current_user.id}/"
-    try:
-        f = open("environment.txt", "r")
-        environment = f.read()
-        print(environment)
-        if environment == "production":
-            os.system("./transfer_results.sh")
-    except:
-        print(f"Environment is : {environment}")
+    user_folder = f"../../../runner_results/ds_pipe_runner/output/results/{current_user.id}/"
     result_files = os.listdir(user_folder)
     tables = []
     all_parameters = []
+
     for result_file in result_files:
-        #parameters = get_result_parameters(result_file)
-        #df = pd.read_csv(user_folder + result_file, header=0, names=["algorithm", "dataset"])
-        #table = df.to_html(classes = "table table-striped", header=False)
-        #print(table)
         tables.append(get_html_table(user_folder + result_file))
-        #    tables = [result.to_html(classes = "table table-striped", header=True, escape=False) for result in user_results]
-        #    for table in tables:
-        #        print(table)
+
     return render_template('results.html', tables=tables)
+
+@main.route('/admin')
+@login_required
+def admin():
+    if current_user.user_type == "base":
+        return "<h1>You shall not pass!</h1>"
+    else:
+        return "<h1>I'm making a cool panel for you! </h1>"
 
 @main.route("/greet")
 @login_required

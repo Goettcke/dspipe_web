@@ -21,6 +21,13 @@
         <li class="nav-item">
             <a class="nav-link" href="/results">Results</a>
         </li>
+        
+        {% if user_type == 'admin' %}
+        <li class="nav-item">
+            <a class="nav-link" href="/admin">Admin</a>
+        </li>
+        {% endif %}
+
         <li class="nav-item">
             <a class="nav-link" href="/logout">Logout</a>
         </li>
