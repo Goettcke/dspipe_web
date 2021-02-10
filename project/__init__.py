@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
 db = SQLAlchemy()
 
 
@@ -14,6 +15,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
     db.init_app(app)
+
     if not os.path.isfile("db.sqlite"):
         db.create_all(app=app)
 
@@ -33,5 +35,9 @@ def create_app():
     # blueprint for non-auth parts of app
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    from .admin import admin as admin_blueprint
+    app.register_blueprint(admin_blueprint)
+
 
     return app

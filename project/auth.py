@@ -55,3 +55,38 @@ def signup_post():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+@auth.route('/update_user_type')
+@login_required
+def update_user_type():
+    user = User.query.filter_by(email=email).first()
+    user_type = request.form.get('user_type')
+
+
+@auth.route('/delete_user')
+@login_required
+def delete_user():
+    user = User.query.filter_by(email=email).first()
+
+
+
+@auth.route('/create_user')
+@login_required
+def create_user():
+    # Code to validate and add user to database
+    email = request.form.get('email')
+    name = request.form.get('name')
+    password = request.form.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:  # if the user exists we redirect back to signup page, so user can login
+        flash('Account already exists - try logging in')
+        return redirect(url_for('auth.signup'))
+
+    new_user = User(email=email, name=name, user_type="base",password=generate_password_hash(password, method='sha256'))
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect(url_for('auth.login'))

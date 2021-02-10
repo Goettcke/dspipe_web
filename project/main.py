@@ -155,13 +155,13 @@ def results():
 
     return render_template('results.html', tables=tables)
 
-@main.route('/admin')
+@main.route('/admin_panel')
 @login_required
-def admin():
+def admin_panel():
     if current_user.user_type == "base":
         return "<h1>You shall not pass!</h1>"
     else:
-        return "<h1>I'm making a cool panel for you! </h1>"
+        return render_template('admin.html')
 
 @main.route("/greet")
 @login_required
