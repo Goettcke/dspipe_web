@@ -7,11 +7,11 @@ import pandas as pd
 from datetime import datetime
 
 
-from ds_pipe.datasets.dataset_loader import Dataset_Collections
+#from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
 from project.models import Todo
-from project import db
+from project import db, dc_full_dict, dc, datasets, dataset_meta_information
 from project.utils import get_html_table
 
 main = Blueprint('main', __name__)
@@ -69,8 +69,8 @@ def run():
         error_log = "output/log.txt"
         tasks = Todo.query.filter(Todo.user_id == current_user.id).order_by(Todo.date_created).all()
         # Task extracted - now it's time for running the stuff!
-        dc = Dataset_Collections() # This should really be removed for a snappier website
-        dc_full_dict = dc.get_full_dictionary()
+        # dc = Dataset_Collections() # This should really be removed for a snappier website
+        # dc_full_dict = dc.get_full_dictionary()
 
         for task in tasks:
             if task.dataset_name in dc_full_dict.keys():
@@ -136,7 +136,6 @@ def profile():
 
     else:
         tasks = Todo.query.filter(Todo.user_id == current_user.id).order_by(Todo.date_created).all()
-        dc = Dataset_Collections()
         datasets = dc.keel_datasets() + dc.chapelle_datasets()
         dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
         return render_template('profile.html', name=current_user.name, tasks=tasks, dataset_meta=dataset_meta_information, user_type=current_user.user_type)

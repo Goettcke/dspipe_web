@@ -20,9 +20,9 @@ In this project a minimalistic website will be created to try out some of the im
 
 ## Administration 
 **The administrator shall be able to**: 
-* Add new users. 
-* Change user rights. 
-* Create and delete users. 
+* Add new users. &#x2611;
+* Change user rights. &#x2611;
+* Create and delete users. &#x2611;
 * Check statistics on number of models run, and frequency. 
 * Stop running jobs. 
 * Handle the scalability of the entire system.
@@ -30,12 +30,13 @@ In this project a minimalistic website will be created to try out some of the im
 
 ## Development 
 The developer of the systems has to:
-* Use continuous integration and deployment
-* Infrastructure as a Code with an automatic DevOps pipeline
+* Use continuous integration and deployment &#x2611;
+* Infrastructure as a Code with an automatic DevOps pipeline &#x2611;
 * Scalable, supporting multiple users exploiting if needed more resources in the cloud
 * Enforce number of compute hours used per user
-* Build a set of unit tests for CI / CD
-* Security (proper credential management and common standard security practices enforced, the evaluation of the docker must not tamper with the remaining part of the system since potentially the code of the students is non trusted)
+* Build a set of unit tests for CI / CD &#x2611;
+* Security (proper credential management and common standard security practices enforced, the evaluation of the docker must not tamper with the remaining part of the system since potentially the code of the students is non trusted) 
+    * This is  not applicable - since it most likely comes from the autograder assignment
 * Provide minimal documentation to deploy and run the system
 
 ## Microservices 
