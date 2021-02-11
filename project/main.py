@@ -42,6 +42,7 @@ def update(id):
         task.dataset_name = request.form['dataset_name']
         task.per = request.form['percent_labelled']
         task.number_of_samples = request.form['number_of_samples']
+        task.parameters = request.form['parameters']
 
         #TODO check if this format can run before submitting it. Return an error page with instructions on what you can run.
 
@@ -119,12 +120,17 @@ def profile():
         q_measure = request.form['q_measure']
         percent_labelled = request.form['percent_labelled']
         number_of_samples = request.form['number_of_samples']
+        parameters = request.form['parameters']
+
+        # Check add the form check here! Or add javascript to check the form before it is submitted
+
         new_task = Todo(algorithm = algorithm,
                         q_measure = q_measure,
                         dataset_name=dataset_name,
                         per=percent_labelled,
                         number_of_samples=number_of_samples,
-                        user_id=current_user.id)
+                        user_id=current_user.id,
+                        parameters=parameters)
         try:
             db.session.add(new_task)
             db.session.commit()

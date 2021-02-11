@@ -4,10 +4,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from ds_pipe.datasets.dataset_loader import Dataset_Collections
 
-dc = Dataset_Collections() # This should really be removed for a snappier website
+# Loading the basic datasets
+dc = Dataset_Collections()
 dc_full_dict = dc.get_full_dictionary()
 datasets = dc.keel_datasets() + dc.chapelle_datasets()
 dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
+
+# Setting the DB
 db = SQLAlchemy()
 
 

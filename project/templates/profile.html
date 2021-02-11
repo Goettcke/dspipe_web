@@ -2,7 +2,9 @@
 
 {% block head %}
 <title>ds_pipe</title>
+
 {% endblock %}
+
 
 {% block body %}
 <div class="container-fluid">
@@ -18,6 +20,7 @@
                 <th>Quality measure</th>
                 <th>Percent Unlabelled</th>
                 <th>Number of samples</th>
+                <th>Parameters</th>
                 <th>Added</th>
                 <th>Actions</th>
             </tr>
@@ -29,7 +32,9 @@
                 <td>{{ task.q_measure }}</td>
                 <td>{{ task.per }}</td>
                 <td>{{ task.number_of_samples }}</td>
+                <td>{{ task.parameters }}</td>
                 <td>{{ task.date_created.date() }}</td>
+                
                 <td>
                     <a href="/delete/{{task.id}}">Delete</a>
                     <br>
@@ -41,38 +46,55 @@
     {% endif %}
     <div class="row">
 
-        <div class="col-">
-            <form class="form-inline" action="/profile" method="POST">
+            <form class="form-inline" name="myForm" action="/profile" method="POST">
 
+                <div class="col-">
                 <label for="algorithm" class="form-label"></label>
                 <input type="text" class="form-control" name="algorithm" id="algorithm" placeholder="Algorithm">
+                </div>
 
+                <div class="col-">
                 <label for="q_measure" class="form-label"></label>
                 <input type="text" class="form-control" name="q_measure" id="q_measure" placeholder="Quality measure">
+                </div>
 
 
-
+                <div class="col-">
                 <label for="dataset_name" class="form-label"></label>
                 <input type="text" class="form-control" name="dataset_name" id="dataset_name" placeholder="Dataset">
+                </div>
 
+                <div class="col-">
                 <label for="percent_labelled" class="form-label"></label>
                 <input type="text" class="form-control" name="percent_labelled" id="percent_labelled" placeholder="Percent labelled">
+                </div>
 
+                <div class="col-">
                 <label for="number_of_samples" class="form-label"></label>
                 <input type="text" class="form-control"  name="number_of_samples" id="number_of_samples" placeholder="Number of Samples">
+                </div>
+
+                <div class="col-">
+                <label for="parameters" class="form-label"></label>
+                <input type="text" class="form-control"  name="parameters" id="parameters" placeholder="Parameters">
+                </div>
 
                 <button type="submit" class="btn btn-primary" value="Add Task">Schedule Task</button>
-            </form>
-        </div>
+                
+                </form>
 
-        <div class="col-sm">
-        <form action="/run" method="POST">
-            <button type="submit" class="btn btn-success" value="Run">Run</button>
-        </form>
-        </div>
+                <div class="col-">
+                <form action="/run" method="POST">
+                    <button type="submit" class="btn btn-success" value="Run">Run</button>
+                </form>
+                </div>
 
-    </div>
+            </div>
+
+        </div>
 </div>
+
+
 
 
 

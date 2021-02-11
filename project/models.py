@@ -11,6 +11,7 @@ class Todo(db.Model):
     per = db.Column(db.Integer, nullable=False)
     number_of_samples = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    parameters = db.Column(db.String(200), nullable=False)
     user_id = db.Column(db.Integer, ForeignKey("user.id", ondelete="CASCADE"))
 
 
