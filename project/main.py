@@ -80,16 +80,42 @@ def run():
                 channel = connection.channel()
                 channel.queue_declare(queue="task_queue", durable=True)
 
+                parameter_dict = {}
+                parameters = task.parameters.split(" ")
+                for parameter in parameters:
+                    k,v = parameter.split("=")
+                    parameter_dict[k] = v
+
+                if "kernel" in parameter_dict.keys():
+                    kernel = parameter_dict["kernel"]
+                else:
+                    kernel = "rbf"
+
+                if "k" in parameter_dict.keys():
+                    n_neighbors = parameter_dict["k"]
+                else:
+                    n_neighbors = 10
+
+                if "a" in parameter_dict.keys():
+                    alpha = parameter_dict["a"]
+                else:
+                    alpha = 0.2
+
+                if "g" in parameter_dict.keys():
+                    gamma = parameter_dict["g"]
+                else:
+                    gamma = 20
+
                 message = json.dumps({"user_id": current_user.id,
                                       "algorithm": task.algorithm,
                                       "number_of_samples": task.number_of_samples,
                                       "dataset_name": task.dataset_name,
-                                      "n_neighbors":10,
+                                      "n_neighbors":n_neighbors,
                                       "quality_measure": task.q_measure,
                                       "percent_labelled":task.per,
-                                      "alpha":0.2,
-                                      "gamma":20,
-                                      "kernel":"knn"})
+                                      "alpha":alpha,
+                                      "gamma":gamma,
+                                      "kernel":kernel})
 
                 channel.basic_publish(exchange="",
                                     routing_key="task_queue",
