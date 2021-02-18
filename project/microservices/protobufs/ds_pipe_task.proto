@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+message Task {
+    int32 user_id = 1;
+    string algorithm = 2;
+    int32 number_of_samples = 3;
+    string dataset_name = 4;
+    int32 n_neighbors = 5; 
+    string quality_measure = 6; 
+    float percent_labelled = 7; 
+    float alpha = 8; 
+    float gamma = 9; 
+    string kernel = 10; 
+    string evaluation_method = 11; 
+}
+
+
+message Task_Results {
+    repeated float results = 1;
+}
+
+service Runner {
+    rpc Run_task (Task) returns (Task_Results);
+}
+
+service Task_Evaluator{
+    rpc Evaluate_Task (Task) returns (Task_Results);
+}
