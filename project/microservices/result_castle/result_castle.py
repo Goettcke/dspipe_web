@@ -3,6 +3,7 @@ import random
 import grpc
 import os
 import ast
+import threading
 
 from ds_pipe_task_pb2_grpc import RunnerStub
 from ds_pipe_task_pb2 import (
@@ -32,6 +33,17 @@ Session.configure(bind=engine)
 
 
 class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
+    def call_runner(self, request):
+        try:
+            runners_response = runners_client.Run_task(request)
+            result = runners_response.results
+
+        except Exception as e:
+            print(e)
+            print("Aww why this no work")
+
+        return result
+
 
     def get_query_list(self,session_query, request, parameters):
         """
@@ -102,106 +114,13 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
         if len(query_list) < 1:
             print("Pis os da - den er tom")
-            try:
-                runners_response = runners_client.Run_task(request)
-                result = runners_response.results
-            except Exception as e:
-                print(e)
-                print("Aww why this no work")
-            if request.algorithm == "knn_ldp":
-
-                try:
-                    # In this case we should make an asynchronous call to runner service.
-                    knn_instance = Knn_ldp(
-                                        dataset=request.dataset_name,
-                                        number_of_samples=request.number_of_samples,
-                                        percent_labelled=request.percent_labelled,
-                                        n_neighbors=request.n_neighbors,
-                                        quality_measure=request.quality_measure,
-                                        evaluation_method=request.evaluation_method,
-                                        result=str(result))
-                    session.add(knn_instance)
-                    session.commit()
-
-                except Exception as e:
-                    print(e)
-                    print("Ahh we didn't get any knn_ldp results from remote :(")
-            elif request.algorithm == "lp_knn":
-
-                try:
-                    instance = Lp_knn(
-                                    dataset=request.dataset_name,
-                                    number_of_samples=request.number_of_samples,
-                                    percent_labelled=request.percent_labelled,
-                                    n_neighbors=request.n_neighbors,
-                                    quality_measure=request.quality_measure,
-                                    evaluation_method=request.evaluation_method,
-                                    result=str(result)
-                                    )
-                    session.add(instance)
-                    session.commit()
-                except Exception as e:
-                    print(e)
-                    print("Ahh we didn't get any lp_knn results from remote :(")
-
-            elif request.algorithm == "ls_knn":
-                try:
-                    instance = Ls_knn(
-                                    dataset=request.dataset_name,
-                                    number_of_samples=request.number_of_samples,
-                                    percent_labelled=request.percent_labelled,
-                                    n_neighbors=request.n_neighbors,
-                                    quality_measure=request.quality_measure,
-                                    evaluation_method=request.evaluation_method,
-                                    result=str(result)
-                                    )
-                    session.add(instance)
-                    session.commit()
-                except Exception as e:
-                    print(e)
-                    print("Ahh we didn't get any ls_knn results from remote :(")
-
-
-            elif request.algorithm == "lp_rbf":
-
-                try:
-                    instance = Lp_rbf(
-                                dataset=request.dataset_name,
-                                number_of_samples=request.number_of_samples,
-                                percent_labelled=request.percent_labelled,
-                                gamma=request.gamma,
-                                quality_measure=request.quality_measure,
-                                evaluation_method=request.evaluation_method,
-                                result=str(result)
-                                )
-                    session.add(instance)
-                    session.commit()
-
-                except Exception as e:
-                    print(e)
-                    print("Ahh we didn't get any lp_rbf results from remote :(")
-
-
-            elif request.algorithm == "ls_rbf":
-                try:
-                    instance = Ls_rbf(
-                                    dataset=request.dataset_name,
-                                    number_of_samples=request.number_of_samples,
-                                    percent_labelled=request.percent_labelled,
-                                    gamma=request.gamma,
-                                    alpha=request.alpha,
-                                    quality_measure=request.quality_measure,
-                                    evaluation_method=request.evaluation_method,
-                                    result=str(result)
-                                    )
-                    session.add(instance)
-                    session.commit()
-
-                except Exception as e:
-                    print(e)
-                    print("Ahh we didn't get any ls_rbf results from remote :(")
-
-
+            """
+            If the database doesn't contain the result, we have to compute it by calling a remote, however, we want to respond immediately, so the website, can get on with it's life.
+            """
+            #rewrite to threading
+            x = threading.Thread(target=self.run_request, args=(request,))
+            x.start()
+            result = [0.42]
         else:
             print("Der ligger sgu noget i databasen")
             print(query_list[0].result)
@@ -211,7 +130,111 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         session.close()
         return result
 
+    def run_request(self, request):
+        # rewrite to threading
+        conn = engine.connect()
+        session = Session(bind=conn)
+        result = [-42]
+        query_list = [-42]
 
+        result = self.call_runner(request)
+
+        if request.algorithm == "knn_ldp":
+
+            try:
+                # In this case we should make an asynchronous call to runner service.
+                knn_instance = Knn_ldp(
+                                    dataset=request.dataset_name,
+                                    number_of_samples=request.number_of_samples,
+                                    percent_labelled=request.percent_labelled,
+                                    n_neighbors=request.n_neighbors,
+                                    quality_measure=request.quality_measure,
+                                    evaluation_method=request.evaluation_method,
+                                    result=str(result))
+                session.add(knn_instance)
+                session.commit()
+
+            except Exception as e:
+                print(e)
+                print("Ahh we didn't get any knn_ldp results from remote :(")
+        elif request.algorithm == "lp_knn":
+
+            try:
+                instance = Lp_knn(
+                                dataset=request.dataset_name,
+                                number_of_samples=request.number_of_samples,
+                                percent_labelled=request.percent_labelled,
+                                n_neighbors=request.n_neighbors,
+                                quality_measure=request.quality_measure,
+                                evaluation_method=request.evaluation_method,
+                                result=str(result)
+                                )
+                session.add(instance)
+                session.commit()
+            except Exception as e:
+                print(e)
+                print("Ahh we didn't get any lp_knn results from remote :(")
+
+        elif request.algorithm == "ls_knn":
+            try:
+                instance = Ls_knn(
+                                dataset=request.dataset_name,
+                                number_of_samples=request.number_of_samples,
+                                percent_labelled=request.percent_labelled,
+                                n_neighbors=request.n_neighbors,
+                                quality_measure=request.quality_measure,
+                                evaluation_method=request.evaluation_method,
+                                result=str(result)
+                                )
+                session.add(instance)
+                session.commit()
+
+            except Exception as e:
+                print(e)
+                print("Ahh we didn't get any ls_knn results from remote :(")
+
+
+        elif request.algorithm == "lp_rbf":
+
+            try:
+                instance = Lp_rbf(
+                            dataset=request.dataset_name,
+                            number_of_samples=request.number_of_samples,
+                            percent_labelled=request.percent_labelled,
+                            gamma=request.gamma,
+                            quality_measure=request.quality_measure,
+                            evaluation_method=request.evaluation_method,
+                            result=str(result)
+                            )
+                session.add(instance)
+                session.commit()
+
+            except Exception as e:
+                print(e)
+                print("Ahh we didn't get any lp_rbf results from remote :(")
+
+
+        elif request.algorithm == "ls_rbf":
+            try:
+                instance = Ls_rbf(
+                                dataset=request.dataset_name,
+                                number_of_samples=request.number_of_samples,
+                                percent_labelled=request.percent_labelled,
+                                gamma=request.gamma,
+                                alpha=request.alpha,
+                                quality_measure=request.quality_measure,
+                                evaluation_method=request.evaluation_method,
+                                result=str(result)
+                                )
+                session.add(instance)
+                session.commit()
+
+            except Exception as e:
+                print(e)
+                print("Ahh we didn't get any ls_rbf results from remote :(")
+
+        session.commit()
+        session.close()
 
     def Evaluate_Task(self, request, context):
         results = [-42]
@@ -230,7 +253,7 @@ def serve():
         ResultCastleService(), server
     )
 
-    server.add_insecure_port("[::]:50050") # most likely should be another port, or use some decorator to route the traffic.
+    server.add_insecure_port("[::]:50050")
     server.add_insecure_port("[::]:50051")
     server.start()
     server.wait_for_termination()
