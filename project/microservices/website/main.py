@@ -142,7 +142,6 @@ def run():
                     percent_labelled = task.per,
                     alpha = parameter_value_dict['n_neighbors'],
                     gamma = parameter_value_dict['n_neighbors'],
-                    kernel = "blarg", # Deprecated and should be removed
                     evaluation_method = "random_sampling"
                 )
 
@@ -202,8 +201,7 @@ def profile():
 @main.route('/results', methods=['GET'])
 @login_required
 def results():
-    user_folder = f"../../../runner_results/ds_pipe_runner/output/results/{current_user.id}/"
-    result_files = os.listdir(user_folder)
+    # TODO make a model locally, that we can interact with!
     tables = []
     all_parameters = []
 

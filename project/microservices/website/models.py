@@ -25,3 +25,15 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
+
+
+class ResultCatalog(db.Model):
+    result_id = db.Column(db.Integer, nullable=False, primary_key=True)
+    algorithm = db.Column(db.String(30), nullable=False)
+
+
+class UserResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    result_id = db.Column(db.Integer, ForeignKey("result_catalog.result_id"))
+    user_id = db.Column(db.Integer, ForeignKey("user.id"))
+

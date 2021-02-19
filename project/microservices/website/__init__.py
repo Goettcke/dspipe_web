@@ -15,7 +15,7 @@ db = SQLAlchemy()
 
 
 def create_app():
-    from .models import User, Todo
+    from .models import User, Todo, ResultCatalog, UserResult
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = 'secret-key-goes-here'
@@ -23,8 +23,9 @@ def create_app():
 
     db.init_app(app)
 
-    if not os.path.isfile("db.sqlite"):
-        db.create_all(app=app)
+    #if not os.path.isfile("db.sqlite"):
+    db.create_all(app=app)
+
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -46,5 +47,6 @@ def create_app():
     from .admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint)
 
-
     return app
+
+
