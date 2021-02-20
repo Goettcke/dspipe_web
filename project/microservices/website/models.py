@@ -30,11 +30,16 @@ class User(UserMixin, db.Model):
 class ResultCatalog(db.Model):
     result_id = db.Column(db.Integer, nullable=False, primary_key=True)
     algorithm = db.Column(db.String(30), nullable=False)
-    remote_id = db.Column(db.Integer, nullable=False, primary_key=True) # The id in the remote table, so send algorithm and remote_id
+    remote_id = db.Column(db.Integer, nullable=False) # The id in the remote table, so send algorithm and remote_id
 
 
 class UserResult(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     result_id = db.Column(db.Integer, ForeignKey("result_catalog.result_id"))
     user_id = db.Column(db.Integer, ForeignKey("user.id"))
+
+class UserPinkSlips(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
+    user_id = db.Column(db.Integer, ForeignKey("user.id"))
+    pink_slip = db.Column(db.Integer, nullable=False)
 

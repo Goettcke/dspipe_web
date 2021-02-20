@@ -20,6 +20,7 @@ message Result_Request {
 
 message Has_Results_Response {
     bool has_result = 1; 
+    optional int32 pink_slip = 2; 
 }
 
 message Task_Results {
@@ -27,7 +28,7 @@ message Task_Results {
 }
 
 service Runner {
-    rpc Run_task (Task) returns (Task_Results);
+    rpc RunTask (Task) returns (Task_Results);
 }
 
 service Task_Evaluator {

@@ -19,7 +19,7 @@ dc_full_dict = dc.get_full_dictionary()
 
 
 class RunnerService(ds_pipe_task_pb2_grpc.RunnerServicer):
-    def Run_task(self, request, context):
+    def RunTask(self, request, context):
         print("Calling run task")
         print("Initializing algorithm")
         if request.algorithm == "knn_ldp":

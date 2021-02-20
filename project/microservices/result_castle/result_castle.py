@@ -3,6 +3,7 @@ import grpc
 import os
 import ast
 import threading
+from random import randint
 
 from ds_pipe_task_pb2_grpc import RunnerStub
 from ds_pipe_task_pb2 import (
@@ -36,9 +37,9 @@ Session.configure(bind=engine)
 
 class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
     def call_runner(self, request):
-        result = [-42]
+        result = -1
         try:
-            runners_response = runners_client.Run_task(request)
+            runners_response = runners_client.RunTask(request)
             result = runners_response.results
 
         except Exception as e:
@@ -89,9 +90,8 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
         conn = engine.connect()
         session = Session(bind=conn)
-        result = [-42]
-        query_list = [-42]
-
+        has_result = False
+        pink_slip = 0
         if request.algorithm == "knn_ldp":
             session_query = session.query(Knn_ldp)
             query_list = self.get_query_list(session_query, request, ["n_neighbors"])
@@ -120,7 +120,8 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
             """
 
             print("Result is not in the database - sending compute request to runner")
-            x = threading.Thread(target=self.run_request, args=(request,))
+            pink_slip = self.generate_pink_slip()
+            x = threading.Thread(target=self.run_request, args=(request,pink_slip,))
             x.start()
             has_result = False
         else:
@@ -132,110 +133,115 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
         session.commit()
         session.close()
-        return has_result
+        return has_result, pink_slip
 
-    def run_request(self, request):
-        # rewrite to threading
+    def run_request(self, request, pink_slip):
         conn = engine.connect()
         session = Session(bind=conn)
         result = [-42]
         query_list = [-42]
 
         result = self.call_runner(request)
+        if result != -1: # Ensuring we don't insert garbage into the db!
 
-        if request.algorithm == "knn_ldp":
+            if request.algorithm == "knn_ldp":
+                try:
+                    # In this case we should make an asynchronous call to runner service.
+                    knn_instance = Knn_ldp(
+                                        dataset=request.dataset_name,
+                                        number_of_samples=request.number_of_samples,
+                                        percent_labelled=request.percent_labelled,
+                                        n_neighbors=request.n_neighbors,
+                                        quality_measure=request.quality_measure,
+                                        evaluation_method=request.evaluation_method,
+                                        result=str(result),
+                                        pink_slip=pink_slip
+                                        )
+                    session.add(knn_instance)
+                    session.commit()
 
-            try:
-                # In this case we should make an asynchronous call to runner service.
-                knn_instance = Knn_ldp(
+                except Exception as e:
+                    print(e)
+                    print("Ahh we didn't get any knn_ldp results from remote :(")
+            elif request.algorithm == "lp_knn":
+
+                try:
+                    instance = Lp_knn(
                                     dataset=request.dataset_name,
                                     number_of_samples=request.number_of_samples,
                                     percent_labelled=request.percent_labelled,
                                     n_neighbors=request.n_neighbors,
                                     quality_measure=request.quality_measure,
                                     evaluation_method=request.evaluation_method,
-                                    result=str(result))
-                session.add(knn_instance)
-                session.commit()
+                                    result=str(result),
+                                    pink_slip=pink_slip
+                                    )
+                    session.add(instance)
+                    session.commit()
+                except Exception as e:
+                    print(e)
+                    print("Ahh we didn't get any lp_knn results from remote :(")
 
-            except Exception as e:
-                print(e)
-                print("Ahh we didn't get any knn_ldp results from remote :(")
-        elif request.algorithm == "lp_knn":
+            elif request.algorithm == "ls_knn":
+                try:
+                    instance = Ls_knn(
+                                    dataset=request.dataset_name,
+                                    number_of_samples=request.number_of_samples,
+                                    percent_labelled=request.percent_labelled,
+                                    n_neighbors=request.n_neighbors,
+                                    quality_measure=request.quality_measure,
+                                    evaluation_method=request.evaluation_method,
+                                    result=str(result),
+                                    pink_slip=pink_slip
+                                    )
+                    session.add(instance)
+                    session.commit()
 
-            try:
-                instance = Lp_knn(
-                                dataset=request.dataset_name,
-                                number_of_samples=request.number_of_samples,
-                                percent_labelled=request.percent_labelled,
-                                n_neighbors=request.n_neighbors,
-                                quality_measure=request.quality_measure,
-                                evaluation_method=request.evaluation_method,
-                                result=str(result)
-                                )
-                session.add(instance)
-                session.commit()
-            except Exception as e:
-                print(e)
-                print("Ahh we didn't get any lp_knn results from remote :(")
-
-        elif request.algorithm == "ls_knn":
-            try:
-                instance = Ls_knn(
-                                dataset=request.dataset_name,
-                                number_of_samples=request.number_of_samples,
-                                percent_labelled=request.percent_labelled,
-                                n_neighbors=request.n_neighbors,
-                                quality_measure=request.quality_measure,
-                                evaluation_method=request.evaluation_method,
-                                result=str(result)
-                                )
-                session.add(instance)
-                session.commit()
-
-            except Exception as e:
-                print(e)
-                print("Ahh we didn't get any ls_knn results from remote :(")
+                except Exception as e:
+                    print(e)
+                    print("Ahh we didn't get any ls_knn results from remote :(")
 
 
-        elif request.algorithm == "lp_rbf":
+            elif request.algorithm == "lp_rbf":
 
-            try:
-                instance = Lp_rbf(
-                            dataset=request.dataset_name,
-                            number_of_samples=request.number_of_samples,
-                            percent_labelled=request.percent_labelled,
-                            gamma=request.gamma,
-                            quality_measure=request.quality_measure,
-                            evaluation_method=request.evaluation_method,
-                            result=str(result)
-                            )
-                session.add(instance)
-                session.commit()
+                try:
+                    instance = Lp_rbf(
+                                    dataset=request.dataset_name,
+                                    number_of_samples=request.number_of_samples,
+                                    percent_labelled=request.percent_labelled,
+                                    gamma=request.gamma,
+                                    quality_measure=request.quality_measure,
+                                    evaluation_method=request.evaluation_method,
+                                    result=str(result),
+                                    pink_slip=pink_slip
+                                    )
+                    session.add(instance)
+                    session.commit()
 
-            except Exception as e:
-                print(e)
-                print("Ahh we didn't get any lp_rbf results from remote :(")
+                except Exception as e:
+                    print(e)
+                    print("Ahh we didn't get any lp_rbf results from remote :(")
 
 
-        elif request.algorithm == "ls_rbf":
-            try:
-                instance = Ls_rbf(
-                                dataset=request.dataset_name,
-                                number_of_samples=request.number_of_samples,
-                                percent_labelled=request.percent_labelled,
-                                gamma=request.gamma,
-                                alpha=request.alpha,
-                                quality_measure=request.quality_measure,
-                                evaluation_method=request.evaluation_method,
-                                result=str(result)
-                                )
-                session.add(instance)
-                session.commit()
+            elif request.algorithm == "ls_rbf":
+                try:
+                    instance = Ls_rbf(
+                                    dataset=request.dataset_name,
+                                    number_of_samples=request.number_of_samples,
+                                    percent_labelled=request.percent_labelled,
+                                    gamma=request.gamma,
+                                    alpha=request.alpha,
+                                    quality_measure=request.quality_measure,
+                                    evaluation_method=request.evaluation_method,
+                                    result=str(result),
+                                    pink_slip=pink_slip
+                                    )
+                    session.add(instance)
+                    session.commit()
 
-            except Exception as e:
-                print(e)
-                print("Ahh we didn't get any ls_rbf results from remote :(")
+                except Exception as e:
+                    print(e)
+                    print("Ahh we didn't get any ls_rbf results from remote :(")
 
         session.commit()
         session.close()
@@ -244,15 +250,19 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         print("something farty")
         has_result = False
         try:
-            has_result = self.find_request(request)
+            has_result, pink_slip = self.find_request(request)
             print("Got has result")
+
+            if has_result:
+                response = Has_Results_Response(has_result = has_result)
+
+            elif has_result == False:
+                response = Has_Results_Response(has_result = has_result, pink_slip=pink_slip)
+
 
         except Exception as e:
             print(e)
-            has_result = False
-
-        response = Has_Results_Response(has_result = has_result)
-        print(f"Now returning result of type {type(response)}")
+            has_result = None
         return response
 
 
@@ -335,6 +345,10 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         session.close()
 
         return task_configuration
+
+    def generate_pink_slip(self):
+        return randint(-2147483648, 2147483647)
+
 
 
 

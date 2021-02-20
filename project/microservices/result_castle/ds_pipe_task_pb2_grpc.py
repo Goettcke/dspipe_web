@@ -14,8 +14,8 @@ class RunnerStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Run_task = channel.unary_unary(
-                '/Runner/Run_task',
+        self.RunTask = channel.unary_unary(
+                '/Runner/RunTask',
                 request_serializer=ds__pipe__task__pb2.Task.SerializeToString,
                 response_deserializer=ds__pipe__task__pb2.Task_Results.FromString,
                 )
@@ -24,7 +24,7 @@ class RunnerStub(object):
 class RunnerServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def Run_task(self, request, context):
+    def RunTask(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,8 +33,8 @@ class RunnerServicer(object):
 
 def add_RunnerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Run_task': grpc.unary_unary_rpc_method_handler(
-                    servicer.Run_task,
+            'RunTask': grpc.unary_unary_rpc_method_handler(
+                    servicer.RunTask,
                     request_deserializer=ds__pipe__task__pb2.Task.FromString,
                     response_serializer=ds__pipe__task__pb2.Task_Results.SerializeToString,
             ),
@@ -49,7 +49,7 @@ class Runner(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def Run_task(request,
+    def RunTask(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,7 +59,7 @@ class Runner(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Runner/Run_task',
+        return grpc.experimental.unary_unary(request, target, '/Runner/RunTask',
             ds__pipe__task__pb2.Task.SerializeToString,
             ds__pipe__task__pb2.Task_Results.FromString,
             options, channel_credentials,

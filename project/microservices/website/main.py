@@ -13,7 +13,7 @@ from ds_pipe_task_pb2 import Task # Uff this is basically the same name as task
 #from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
-from models import Todo
+from models import Todo, UserResult, UserPinkSlips
 from app import db, dc_full_dict, dc, datasets, dataset_meta_information
 from utils import get_html_table
 
@@ -105,7 +105,7 @@ def run():
     if request.method == 'POST':
         error_log = "output/log.txt"
         tasks = Todo.query.filter(Todo.user_id == current_user.id).order_by(Todo.date_created).all()
-
+        number_of_ready_results = 0
         for task in tasks:
             if task.dataset_name in dc_full_dict.keys():
 
@@ -147,15 +147,26 @@ def run():
                 )
 
                 evaluators_response = evaluators_client.Evaluate_Task(task_request)
-                print(type(evaluators_response))
+                if evaluators_response.has_result == True:
+                    number_of_ready_results += 1
+                else:
+                    print(f"pink_slip: {evaluators_response.pink_slip}")
+                    user_pink_slip = UserPinkSlips(
+                                    user_id = current_user.id,
+                                    pink_slip = evaluators_response.pink_slip
+                                    )
+                    db.session.add(user_pink_slip)
+                    db.session.commit()
+
 
             else:
                 f = open(error_log, "a+")
                 f.write(f"{task.dataset_name} not in datasets,{datetime.utcnow()}\n")
                 f.close()
 
+
         delete(task.id)
-        print("No more jobs in queue")
+        print(f"Total requests: {len(tasks)}\nWe have {number_of_ready_results} ready and {len(tasks) - number_of_ready_results} are being processed")
         return redirect(url_for('main.profile'))
 
     else:

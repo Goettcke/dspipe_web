@@ -14,6 +14,7 @@ class Knn_ldp(Base):
     quality_measure = Column(String)
     evaluation_method = Column(String)
     result = Column(String)
+    pink_slip = Column(Integer)
 
 class Lp_knn(Base):
     __tablename__ = "lp_knn"
@@ -25,6 +26,7 @@ class Lp_knn(Base):
     quality_measure = Column(String)
     evaluation_method = Column(String)
     result = Column(String)
+    pink_slip = Column(Integer)
 
 class Lp_rbf(Base):
     __tablename__ = "lp_rbf"
@@ -36,6 +38,8 @@ class Lp_rbf(Base):
     quality_measure = Column(String)
     evaluation_method = Column(String)
     result = Column(String)
+    pink_slip = Column(Integer)
+
 
 
 class Ls_knn(Base):
@@ -48,6 +52,7 @@ class Ls_knn(Base):
     quality_measure = Column(String)
     evaluation_method = Column(String)
     result = Column(String)
+    pink_slip = Column(Integer)
 
 class Ls_rbf(Base):
     __tablename__ = "ls_rbf"
@@ -59,6 +64,7 @@ class Ls_rbf(Base):
     alpha = Column(Float)
     quality_measure = Column(String)
     evaluation_method = Column(String)
+    pink_slip = Column(Integer)
 
 
 if not os.path.isfile("db.sqlite"):
