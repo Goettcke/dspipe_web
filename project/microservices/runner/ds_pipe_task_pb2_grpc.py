@@ -78,7 +78,7 @@ class Task_EvaluatorStub(object):
         self.Evaluate_Task = channel.unary_unary(
                 '/Task_Evaluator/Evaluate_Task',
                 request_serializer=ds__pipe__task__pb2.Task.SerializeToString,
-                response_deserializer=ds__pipe__task__pb2.Task_Results.FromString,
+                response_deserializer=ds__pipe__task__pb2.Has_Results_Response.FromString,
                 )
         self.ResultResponse = channel.unary_unary(
                 '/Task_Evaluator/ResultResponse',
@@ -119,7 +119,7 @@ def add_Task_EvaluatorServicer_to_server(servicer, server):
             'Evaluate_Task': grpc.unary_unary_rpc_method_handler(
                     servicer.Evaluate_Task,
                     request_deserializer=ds__pipe__task__pb2.Task.FromString,
-                    response_serializer=ds__pipe__task__pb2.Task_Results.SerializeToString,
+                    response_serializer=ds__pipe__task__pb2.Has_Results_Response.SerializeToString,
             ),
             'ResultResponse': grpc.unary_unary_rpc_method_handler(
                     servicer.ResultResponse,
@@ -154,7 +154,7 @@ class Task_Evaluator(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Task_Evaluator/Evaluate_Task',
             ds__pipe__task__pb2.Task.SerializeToString,
-            ds__pipe__task__pb2.Task_Results.FromString,
+            ds__pipe__task__pb2.Has_Results_Response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

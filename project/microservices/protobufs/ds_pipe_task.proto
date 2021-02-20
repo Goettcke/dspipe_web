@@ -18,6 +18,10 @@ message Result_Request {
     string algorithm_name = 2; 
 }
 
+message Has_Results_Response {
+    bool has_result = 1; 
+}
+
 message Task_Results {
     repeated float results = 1;
 }
@@ -26,8 +30,8 @@ service Runner {
     rpc Run_task (Task) returns (Task_Results);
 }
 
-service Task_Evaluator{
-    rpc Evaluate_Task (Task) returns (Task_Results);
+service Task_Evaluator {
+    rpc Evaluate_Task (Task) returns (Has_Results_Response);
     rpc ResultResponse (Result_Request) returns (Task_Results);
     rpc ConfigurationResponse (Result_Request) returns (Task); 
 }

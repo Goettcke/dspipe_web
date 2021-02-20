@@ -7,15 +7,15 @@ from datetime import datetime
 
 # Setting up the GRPC
 import grpc
-from website.ds_pipe_task_pb2_grpc import RunnerStub, Task_EvaluatorStub
-from website.ds_pipe_task_pb2 import Task # Uff this is basically the same name as task
+from ds_pipe_task_pb2_grpc import RunnerStub, Task_EvaluatorStub
+from ds_pipe_task_pb2 import Task # Uff this is basically the same name as task
 
 #from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
-from website.models import Todo
-from website import db, dc_full_dict, dc, datasets, dataset_meta_information
-from website.utils import get_html_table
+from models import Todo
+from app import db, dc_full_dict, dc, datasets, dataset_meta_information
+from utils import get_html_table
 
 main = Blueprint('main', __name__)
 
@@ -33,6 +33,7 @@ def delete(id):
         db.session.delete(task_to_delete)
         db.session.commit()
         return redirect(url_for('main.profile'))
+
     except:
         return 'There was a problem deleting that task'
 
@@ -58,7 +59,6 @@ def update(id):
         except Exception as e:
             print(e)
             return 'There was an issue updating your task'
-
     else:
         return render_template('update.html', task=task)
 
@@ -101,6 +101,7 @@ def run():
     TODO 3. Different configurations of classifiers (parameters)
     :return: None
     """
+
     if request.method == 'POST':
         error_log = "output/log.txt"
         tasks = Todo.query.filter(Todo.user_id == current_user.id).order_by(Todo.date_created).all()
@@ -140,14 +141,13 @@ def run():
                     n_neighbors = parameter_value_dict['n_neighbors'],
                     quality_measure = task.q_measure,
                     percent_labelled = task.per,
-                    alpha = parameter_value_dict['n_neighbors'],
-                    gamma = parameter_value_dict['n_neighbors'],
+                    alpha = parameter_value_dict['alpha'],
+                    gamma = parameter_value_dict['gamma'],
                     evaluation_method = "random_sampling"
                 )
 
                 evaluators_response = evaluators_client.Evaluate_Task(task_request)
-                results=evaluators_response.results
-                print(results)
+                print(type(evaluators_response))
 
             else:
                 f = open(error_log, "a+")
@@ -159,7 +159,7 @@ def run():
         return redirect(url_for('main.profile'))
 
     else:
-        return "There was an with the backend - cannot run the tasks"
+        return "There was an error with the backend - cannot run the tasks"
 
 
 @main.route('/profile', methods=['POST', 'GET'])

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12\x64s_pipe_task.proto\"\xec\x01\n\x04Task\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\talgorithm\x18\x02 \x01(\t\x12\x19\n\x11number_of_samples\x18\x03 \x01(\x05\x12\x14\n\x0c\x64\x61taset_name\x18\x04 \x01(\t\x12\x13\n\x0bn_neighbors\x18\x05 \x01(\x05\x12\x17\n\x0fquality_measure\x18\x06 \x01(\t\x12\x18\n\x10percent_labelled\x18\x07 \x01(\x02\x12\r\n\x05\x61lpha\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x0e\n\x06kernel\x18\n \x01(\t\x12\x19\n\x11\x65valuation_method\x18\x0b \x01(\t\";\n\x0eResult_Request\x12\x11\n\tresult_id\x18\x01 \x01(\x05\x12\x16\n\x0e\x61lgorithm_name\x18\x02 \x01(\t\"\x1f\n\x0cTask_Results\x12\x0f\n\x07results\x18\x01 \x03(\x02\x32*\n\x06Runner\x12 \n\x08Run_task\x12\x05.Task\x1a\r.Task_Results2\x9a\x01\n\x0eTask_Evaluator\x12%\n\rEvaluate_Task\x12\x05.Task\x1a\r.Task_Results\x12\x30\n\x0eResultResponse\x12\x0f.Result_Request\x1a\r.Task_Results\x12/\n\x15\x43onfigurationResponse\x12\x0f.Result_Request\x1a\x05.Taskb\x06proto3'
+  serialized_pb=b'\n\x12\x64s_pipe_task.proto\"\xdc\x01\n\x04Task\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\talgorithm\x18\x02 \x01(\t\x12\x19\n\x11number_of_samples\x18\x03 \x01(\x05\x12\x14\n\x0c\x64\x61taset_name\x18\x04 \x01(\t\x12\x13\n\x0bn_neighbors\x18\x05 \x01(\x05\x12\x17\n\x0fquality_measure\x18\x06 \x01(\t\x12\x18\n\x10percent_labelled\x18\x07 \x01(\x02\x12\r\n\x05\x61lpha\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x19\n\x11\x65valuation_method\x18\n \x01(\t\";\n\x0eResult_Request\x12\x11\n\tresult_id\x18\x01 \x01(\x05\x12\x16\n\x0e\x61lgorithm_name\x18\x02 \x01(\t\"*\n\x14Has_Results_Response\x12\x12\n\nhas_result\x18\x01 \x01(\x08\"\x1f\n\x0cTask_Results\x12\x0f\n\x07results\x18\x01 \x03(\x02\x32*\n\x06Runner\x12 \n\x08Run_task\x12\x05.Task\x1a\r.Task_Results2\xa2\x01\n\x0eTask_Evaluator\x12-\n\rEvaluate_Task\x12\x05.Task\x1a\x15.Has_Results_Response\x12\x30\n\x0eResultResponse\x12\x0f.Result_Request\x1a\r.Task_Results\x12/\n\x15\x43onfigurationResponse\x12\x0f.Result_Request\x1a\x05.Taskb\x06proto3'
 )
 
 
@@ -97,15 +97,8 @@ _TASK = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='kernel', full_name='Task.kernel', index=9,
+      name='evaluation_method', full_name='Task.evaluation_method', index=9,
       number=10, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='evaluation_method', full_name='Task.evaluation_method', index=10,
-      number=11, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -123,7 +116,7 @@ _TASK = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=23,
-  serialized_end=259,
+  serialized_end=243,
 )
 
 
@@ -161,8 +154,40 @@ _RESULT_REQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=261,
-  serialized_end=320,
+  serialized_start=245,
+  serialized_end=304,
+)
+
+
+_HAS_RESULTS_RESPONSE = _descriptor.Descriptor(
+  name='Has_Results_Response',
+  full_name='Has_Results_Response',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='has_result', full_name='Has_Results_Response.has_result', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=306,
+  serialized_end=348,
 )
 
 
@@ -193,12 +218,13 @@ _TASK_RESULTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=322,
-  serialized_end=353,
+  serialized_start=350,
+  serialized_end=381,
 )
 
 DESCRIPTOR.message_types_by_name['Task'] = _TASK
 DESCRIPTOR.message_types_by_name['Result_Request'] = _RESULT_REQUEST
+DESCRIPTOR.message_types_by_name['Has_Results_Response'] = _HAS_RESULTS_RESPONSE
 DESCRIPTOR.message_types_by_name['Task_Results'] = _TASK_RESULTS
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -216,6 +242,13 @@ Result_Request = _reflection.GeneratedProtocolMessageType('Result_Request', (_me
   })
 _sym_db.RegisterMessage(Result_Request)
 
+Has_Results_Response = _reflection.GeneratedProtocolMessageType('Has_Results_Response', (_message.Message,), {
+  'DESCRIPTOR' : _HAS_RESULTS_RESPONSE,
+  '__module__' : 'ds_pipe_task_pb2'
+  # @@protoc_insertion_point(class_scope:Has_Results_Response)
+  })
+_sym_db.RegisterMessage(Has_Results_Response)
+
 Task_Results = _reflection.GeneratedProtocolMessageType('Task_Results', (_message.Message,), {
   'DESCRIPTOR' : _TASK_RESULTS,
   '__module__' : 'ds_pipe_task_pb2'
@@ -232,8 +265,8 @@ _RUNNER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=355,
-  serialized_end=397,
+  serialized_start=383,
+  serialized_end=425,
   methods=[
   _descriptor.MethodDescriptor(
     name='Run_task',
@@ -258,8 +291,8 @@ _TASK_EVALUATOR = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=400,
-  serialized_end=554,
+  serialized_start=428,
+  serialized_end=590,
   methods=[
   _descriptor.MethodDescriptor(
     name='Evaluate_Task',
@@ -267,7 +300,7 @@ _TASK_EVALUATOR = _descriptor.ServiceDescriptor(
     index=0,
     containing_service=None,
     input_type=_TASK,
-    output_type=_TASK_RESULTS,
+    output_type=_HAS_RESULTS_RESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

@@ -1,5 +1,4 @@
 from concurrent import futures
-import random
 import grpc
 import os
 import ast
@@ -8,7 +7,8 @@ import threading
 from ds_pipe_task_pb2_grpc import RunnerStub
 from ds_pipe_task_pb2 import (
     Task_Results,
-    Task
+    Task,
+    Has_Results_Response
 )
 
 import ds_pipe_task_pb2_grpc
@@ -36,6 +36,7 @@ Session.configure(bind=engine)
 
 class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
     def call_runner(self, request):
+        result = [-42]
         try:
             runners_response = runners_client.Run_task(request)
             result = runners_response.results
@@ -91,8 +92,6 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         result = [-42]
         query_list = [-42]
 
-        print(f"\n\n\n Vi koerer nu John  \n \n \n ")
-
         if request.algorithm == "knn_ldp":
             session_query = session.query(Knn_ldp)
             query_list = self.get_query_list(session_query, request, ["n_neighbors"])
@@ -119,17 +118,21 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
             """
             If the database doesn't contain the result, we have to compute it by calling a remote, however, we want to respond immediately, so the website, can get on with it's life.
             """
+
+            print("Result is not in the database - sending compute request to runner")
             x = threading.Thread(target=self.run_request, args=(request,))
             x.start()
-            result = [0.42]
+            has_result = False
         else:
+
             print("Result lies in the database")
-            print(query_list[0].result)
-            result = ast.literal_eval(query_list[0].result)
+            has_result = True
+            #print(query_list[0].result)
+            #result = ast.literal_eval(query_list[0].result)
 
         session.commit()
         session.close()
-        return result
+        return has_result
 
     def run_request(self, request):
         # rewrite to threading
@@ -238,15 +241,20 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         session.close()
 
     def Evaluate_Task(self, request, context):
-        results = [-42]
+        print("something farty")
+        has_result = False
         try:
-            results = self.find_request(request)
+            has_result = self.find_request(request)
+            print("Got has result")
 
         except Exception as e:
             print(e)
-            print("Some shit happened")
+            has_result = False
 
-        return Task_Results(results=results)
+        response = Has_Results_Response(has_result = has_result)
+        print(f"Now returning result of type {type(response)}")
+        return response
+
 
     # CamelCased to denote RPC call
     def ResultResponse(self, request, context):
@@ -273,10 +281,11 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
 
         query_result = session_query.filter_by(id=request.result_id).first()
-        result = ast.literal_eval(query_result.result)
+        results = ast.literal_eval(query_result.result)
         session.commit()
         session.close()
-        return result
+
+        return Task_Results(results=results)
 
     # CamelCased to denote RPC call
     def ConfigurationResponse(self, request, context):

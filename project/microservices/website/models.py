@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 from sqlalchemy import ForeignKey
-from . import db
+from app import db
 from datetime import datetime
 
 class Todo(db.Model):
@@ -30,6 +30,7 @@ class User(UserMixin, db.Model):
 class ResultCatalog(db.Model):
     result_id = db.Column(db.Integer, nullable=False, primary_key=True)
     algorithm = db.Column(db.String(30), nullable=False)
+    remote_id = db.Column(db.Integer, nullable=False, primary_key=True) # The id in the remote table, so send algorithm and remote_id
 
 
 class UserResult(db.Model):

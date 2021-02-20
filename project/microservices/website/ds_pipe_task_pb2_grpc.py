@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import website.ds_pipe_task_pb2 as ds__pipe__task__pb2
+import ds_pipe_task_pb2 as ds__pipe__task__pb2
 
 
 class RunnerStub(object):
@@ -78,7 +78,17 @@ class Task_EvaluatorStub(object):
         self.Evaluate_Task = channel.unary_unary(
                 '/Task_Evaluator/Evaluate_Task',
                 request_serializer=ds__pipe__task__pb2.Task.SerializeToString,
+                response_deserializer=ds__pipe__task__pb2.Has_Results_Response.FromString,
+                )
+        self.ResultResponse = channel.unary_unary(
+                '/Task_Evaluator/ResultResponse',
+                request_serializer=ds__pipe__task__pb2.Result_Request.SerializeToString,
                 response_deserializer=ds__pipe__task__pb2.Task_Results.FromString,
+                )
+        self.ConfigurationResponse = channel.unary_unary(
+                '/Task_Evaluator/ConfigurationResponse',
+                request_serializer=ds__pipe__task__pb2.Result_Request.SerializeToString,
+                response_deserializer=ds__pipe__task__pb2.Task.FromString,
                 )
 
 
@@ -91,13 +101,35 @@ class Task_EvaluatorServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ResultResponse(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ConfigurationResponse(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_Task_EvaluatorServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Evaluate_Task': grpc.unary_unary_rpc_method_handler(
                     servicer.Evaluate_Task,
                     request_deserializer=ds__pipe__task__pb2.Task.FromString,
+                    response_serializer=ds__pipe__task__pb2.Has_Results_Response.SerializeToString,
+            ),
+            'ResultResponse': grpc.unary_unary_rpc_method_handler(
+                    servicer.ResultResponse,
+                    request_deserializer=ds__pipe__task__pb2.Result_Request.FromString,
                     response_serializer=ds__pipe__task__pb2.Task_Results.SerializeToString,
+            ),
+            'ConfigurationResponse': grpc.unary_unary_rpc_method_handler(
+                    servicer.ConfigurationResponse,
+                    request_deserializer=ds__pipe__task__pb2.Result_Request.FromString,
+                    response_serializer=ds__pipe__task__pb2.Task.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -122,6 +154,40 @@ class Task_Evaluator(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Task_Evaluator/Evaluate_Task',
             ds__pipe__task__pb2.Task.SerializeToString,
+            ds__pipe__task__pb2.Has_Results_Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ResultResponse(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Task_Evaluator/ResultResponse',
+            ds__pipe__task__pb2.Result_Request.SerializeToString,
             ds__pipe__task__pb2.Task_Results.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ConfigurationResponse(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Task_Evaluator/ConfigurationResponse',
+            ds__pipe__task__pb2.Result_Request.SerializeToString,
+            ds__pipe__task__pb2.Task.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
