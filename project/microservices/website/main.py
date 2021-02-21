@@ -8,12 +8,16 @@ from datetime import datetime
 # Setting up the GRPC
 import grpc
 from ds_pipe_task_pb2_grpc import RunnerStub, Task_EvaluatorStub
-from ds_pipe_task_pb2 import Task # Uff this is basically the same name as task
+from ds_pipe_task_pb2 import (# importing the messages
+                             Task, # Uff this is basically the same name as task, but thi
+                             Pink_Slip,
+                            Result_Request
+                            )
 
 #from ds_pipe.datasets.dataset_loader import Dataset_Collections
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
-from models import Todo, UserResult, UserPinkSlips
+from models import Todo, UserResult, UserPinkSlips, ResultCatalog
 from app import db, dc_full_dict, dc, datasets, dataset_meta_information
 from utils import get_html_table
 
@@ -212,14 +216,56 @@ def profile():
 @main.route('/results', methods=['GET'])
 @login_required
 def results():
-    # TODO make a model locally, that we can interact with!
     tables = []
     all_parameters = []
 
+    # 1. First we look through the pink slips
+    pink_slip_query = UserPinkSlips.query.filter(UserPinkSlips.user_id == current_user.id).all()
+    for pink_slip_instance in pink_slip_query:
+        alg_id_request = Pink_Slip(pink_slip = pink_slip_instance.pink_slip)
+        response = evaluators_client.GetPinkSlipAlgId(alg_id_request)
+        id_ = response.id
+        alg = response.alg
+        if id_ != -1: # The result castle doesn't have the results for the test yet
+            result_catalog_instance = ResultCatalog(remote_id=id_, algorithm=alg)
+            db.session.add(result_catalog_instance)
+            db.session.commit()
+
+            db.session.delete(pink_slip_instance) # interesting if these are accumulating anyway
+
+            # 2. Then we update the user results table when we have updated the user using pink slip
+            user_result_instance = UserResult(result_id=result_catalog_instance.id, user_id=current_user.id)
+            db.session.add(user_result_instance)
+            db.session.commit()
+
+
+    # 3. Then we run through the users results and call all the result configurations and result
+    user_result_query = db.session.query(UserResult, ResultCatalog).filter(UserResult.user_id==current_user.id).all()
+    #user_result_query = UserResult.query().filter(UserResult.user_id==current_user.id).join()
+
+    for user_query_instance in user_result_query:
+        print(user_query_instance)
+        user_instance, res_cat_instance = user_query_instance
+        print(f"Remote id: {res_cat_instance.remote_id}\n algorithm:{res_cat_instance.algorithm}")
+        # Okay now we have the stuff then make the remote call.
+        result_request = Result_Request(result_id=res_cat_instance.remote_id, algorithm_name=res_cat_instance.algorithm)
+        res_response = evaluators_client.ResultResponse(result_request)
+        print(res_response.results)
+        config_response = evaluators_client.ConfigurationResponse(result_request)
+        print(config_response.quality_measure)
+
+
+
+
+    """
+    old method used for generating html tables to serve to the front end
     for result_file in result_files:
         tables.append(get_html_table(user_folder + result_file))
 
     return render_template('results.html', tables=tables)
+    """
+
+    return "Hej!"
 
 @main.route('/admin_panel')
 @login_required

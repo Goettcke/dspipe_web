@@ -9,7 +9,8 @@ from ds_pipe_task_pb2_grpc import RunnerStub
 from ds_pipe_task_pb2 import (
     Task_Results,
     Task,
-    Has_Results_Response
+    Has_Results_Response,
+    Alg_Id
 )
 
 import ds_pipe_task_pb2_grpc
@@ -299,6 +300,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
     # CamelCased to denote RPC call
     def ConfigurationResponse(self, request, context):
+        print("Running ConfigurationResponse")
         conn = engine.connect()
         session = Session(bind=conn)
 
@@ -330,15 +332,15 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
 
         task_configuration = Task(user_id=0,
-             algorithm=request.algorithm,
+             algorithm=request.algorithm_name,
              number_of_samples=query_result.number_of_samples,
              dataset_name = query_result.dataset,
-             n_neighbors = get_n_neighbors(request.algorithm),
+             n_neighbors = get_n_neighbors(request.algorithm_name),
              quality_measure = query_result.quality_measure,
              percent_labelled = query_result.percent_labelled,
-             alpha = get_alpha(request.algorithm),
-             gamma = get_gamma(request.algorithm),
-             evaluation = query_result.evaluation_method
+             alpha = get_alpha(request.algorithm_name),
+             gamma = get_gamma(request.algorithm_name),
+             evaluation_method = query_result.evaluation_method
              )
 
         session.commit()
@@ -347,8 +349,56 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         return task_configuration
 
     def generate_pink_slip(self):
-        return randint(-2147483648, 2147483647)
+        pink_slip = -1
+        """
+        This i-1 stuff, and the loop setup is to avoid the very unlikely event
+        that the pink slip is -1 since this is our error code, and the user database entry means,
+        that if we set pink slips to -1 establising the pointer, we will never find them in queries.
+        """
+        while pink_slip == -1:
+            pink_slip = randint(-2147483648, 2147483647)
+        return pink_slip
 
+    def GetPinkSlipAlgId(self, request, context):
+        pink_slip = request.pink_slip
+        conn = engine.connect()
+        session = Session(bind=conn)
+        alg = ""
+        id_ = -1
+        knn_ldp_query = session.query(Knn_ldp).filter_by(pink_slip = pink_slip).all()
+        lp_knn_query = session.query(Lp_knn).filter_by(pink_slip = pink_slip).all()
+        ls_knn_query = session.query(Ls_knn).filter_by(pink_slip = pink_slip).all()
+        lp_rbf_query = session.query(Lp_rbf).filter_by(pink_slip = pink_slip).all()
+        ls_rbf_query = session.query(Ls_rbf).filter_by(pink_slip = pink_slip).all()
+
+        if knn_ldp_query != []: #Meaning our results were found here
+            alg = "knn_ldp"
+            id_ = knn_ldp_query[0].id
+
+        elif lp_knn_query != []:
+            alg = "lp_knn"
+            id_ = lp_knn_query[0].id
+
+        elif ls_knn_query != []:
+            alg = "ls_knn"
+            id_ = ls_knn_query[0].id
+
+        elif lp_rbf_query != []:
+            alg = "lp_rbf"
+            id_ = ls_rbf_query[0].id
+
+        elif ls_rbf_query != []:
+            alg = "ls_rbf"
+            id_ = ls_rbf_query[0].id
+        else:
+            print("Could't find the pink slip in the database :(  )")
+
+        if id_ == -1 or alg == "":
+            print("An unexpected error occurred")
+        session.commit()
+        session.close()
+        response = Alg_Id(id = id_, alg = alg)
+        return response
 
 
 

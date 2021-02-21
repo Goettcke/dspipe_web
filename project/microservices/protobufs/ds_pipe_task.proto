@@ -27,6 +27,15 @@ message Task_Results {
     repeated float results = 1;
 }
 
+message Pink_Slip {
+    int32 pink_slip = 1; 
+}
+
+message Alg_Id {
+    int32 id = 1; 
+    string alg = 2; 
+}
+
 service Runner {
     rpc RunTask (Task) returns (Task_Results);
 }
@@ -35,4 +44,5 @@ service Task_Evaluator {
     rpc Evaluate_Task (Task) returns (Has_Results_Response);
     rpc ResultResponse (Result_Request) returns (Task_Results);
     rpc ConfigurationResponse (Result_Request) returns (Task); 
+    rpc GetPinkSlipAlgId (Pink_Slip) returns (Alg_Id);
 }

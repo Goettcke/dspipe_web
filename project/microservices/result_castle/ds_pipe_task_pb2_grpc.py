@@ -90,6 +90,11 @@ class Task_EvaluatorStub(object):
                 request_serializer=ds__pipe__task__pb2.Result_Request.SerializeToString,
                 response_deserializer=ds__pipe__task__pb2.Task.FromString,
                 )
+        self.GetPinkSlipAlgId = channel.unary_unary(
+                '/Task_Evaluator/GetPinkSlipAlgId',
+                request_serializer=ds__pipe__task__pb2.Pink_Slip.SerializeToString,
+                response_deserializer=ds__pipe__task__pb2.Alg_Id.FromString,
+                )
 
 
 class Task_EvaluatorServicer(object):
@@ -113,6 +118,12 @@ class Task_EvaluatorServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetPinkSlipAlgId(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_Task_EvaluatorServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -130,6 +141,11 @@ def add_Task_EvaluatorServicer_to_server(servicer, server):
                     servicer.ConfigurationResponse,
                     request_deserializer=ds__pipe__task__pb2.Result_Request.FromString,
                     response_serializer=ds__pipe__task__pb2.Task.SerializeToString,
+            ),
+            'GetPinkSlipAlgId': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPinkSlipAlgId,
+                    request_deserializer=ds__pipe__task__pb2.Pink_Slip.FromString,
+                    response_serializer=ds__pipe__task__pb2.Alg_Id.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -189,5 +205,22 @@ class Task_Evaluator(object):
         return grpc.experimental.unary_unary(request, target, '/Task_Evaluator/ConfigurationResponse',
             ds__pipe__task__pb2.Result_Request.SerializeToString,
             ds__pipe__task__pb2.Task.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetPinkSlipAlgId(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/Task_Evaluator/GetPinkSlipAlgId',
+            ds__pipe__task__pb2.Pink_Slip.SerializeToString,
+            ds__pipe__task__pb2.Alg_Id.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
