@@ -11,14 +11,14 @@ def get_result_parameters(file_):
     else:
         print("Please provide a .csv file")
 
-def get_html_table(result_file_path):
-    result_file = result_file_path.split("/")[-1]
-    parameters = get_result_parameters(result_file)
-    algorithm = parameters['alg']
-    div_top = "<div class = 'container'>\n"
+def get_html_table(df):
 
+
+"""
+    div_top = "<div class = 'container'>\n"
     if algorithm == "knnldp":
         table_head = "<div class='row'> <table class = 'table table-striped table-dark'>\n <thead> \n  <tr>\n     <th scope='col'>algorithm</th> <th scope='col'>Number of Samples</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>n neighbors</th> </tr></thead>"
+
         table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['n']}</td> </tbody></table> </div> \n"
         heading = table_head + table_content
 
@@ -40,7 +40,7 @@ def get_html_table(result_file_path):
             table_content = f"<tbody> <th scope='row'>{parameters['alg']}</th> <td>{parameters['ns']}</td> <td>{parameters['q']}</td><td>{parameters['pl']}</td> <td>{parameters['n']} </td>  </tbody></table> </div> \n"
 
         heading = table_head + table_content
-
+"""
     df = pd.read_csv(result_file_path, header=None, names = list(range(int(parameters['ns']))))
     #df.columns = ["algorithm", "dataset"] + [str(x) for x in list(range(df.shape[0]-2))]
     df = df.multiply(100)

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x12\x64s_pipe_task.proto\"\xdc\x01\n\x04Task\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\talgorithm\x18\x02 \x01(\t\x12\x19\n\x11number_of_samples\x18\x03 \x01(\x05\x12\x14\n\x0c\x64\x61taset_name\x18\x04 \x01(\t\x12\x13\n\x0bn_neighbors\x18\x05 \x01(\x05\x12\x17\n\x0fquality_measure\x18\x06 \x01(\t\x12\x18\n\x10percent_labelled\x18\x07 \x01(\x02\x12\r\n\x05\x61lpha\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x19\n\x11\x65valuation_method\x18\n \x01(\t\";\n\x0eResult_Request\x12\x11\n\tresult_id\x18\x01 \x01(\x05\x12\x16\n\x0e\x61lgorithm_name\x18\x02 \x01(\t\"P\n\x14Has_Results_Response\x12\x12\n\nhas_result\x18\x01 \x01(\x08\x12\x16\n\tpink_slip\x18\x02 \x01(\x05H\x00\x88\x01\x01\x42\x0c\n\n_pink_slip\"\x1f\n\x0cTask_Results\x12\x0f\n\x07results\x18\x01 \x03(\x02\"\x1e\n\tPink_Slip\x12\x11\n\tpink_slip\x18\x01 \x01(\x05\"!\n\x06\x41lg_Id\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03\x61lg\x18\x02 \x01(\t2)\n\x06Runner\x12\x1f\n\x07RunTask\x12\x05.Task\x1a\r.Task_Results2\xcb\x01\n\x0eTask_Evaluator\x12-\n\rEvaluate_Task\x12\x05.Task\x1a\x15.Has_Results_Response\x12\x30\n\x0eResultResponse\x12\x0f.Result_Request\x1a\r.Task_Results\x12/\n\x15\x43onfigurationResponse\x12\x0f.Result_Request\x1a\x05.Task\x12\'\n\x10GetPinkSlipAlgId\x12\n.Pink_Slip\x1a\x07.Alg_Idb\x06proto3'
+  serialized_pb=b'\n\x12\x64s_pipe_task.proto\"\xfe\x01\n\x04Task\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x11\n\talgorithm\x18\x02 \x01(\t\x12\x19\n\x11number_of_samples\x18\x03 \x01(\x05\x12\x14\n\x0c\x64\x61taset_name\x18\x04 \x01(\t\x12\x13\n\x0bn_neighbors\x18\x05 \x01(\x05\x12\x17\n\x0fquality_measure\x18\x06 \x01(\t\x12\x18\n\x10percent_labelled\x18\x07 \x01(\x02\x12\r\n\x05\x61lpha\x18\x08 \x01(\x02\x12\r\n\x05gamma\x18\t \x01(\x02\x12\x19\n\x11\x65valuation_method\x18\n \x01(\t\x12\x14\n\x07results\x18\x0b \x01(\tH\x00\x88\x01\x01\x42\n\n\x08_results\";\n\x0eResult_Request\x12\x11\n\tresult_id\x18\x01 \x01(\x05\x12\x16\n\x0e\x61lgorithm_name\x18\x02 \x01(\t\"P\n\x14Has_Results_Response\x12\x12\n\nhas_result\x18\x01 \x01(\x08\x12\x16\n\tpink_slip\x18\x02 \x01(\x05H\x00\x88\x01\x01\x42\x0c\n\n_pink_slip\"\x1f\n\x0cTask_Results\x12\x0f\n\x07results\x18\x01 \x03(\x02\"\x1e\n\tPink_Slip\x12\x11\n\tpink_slip\x18\x01 \x01(\x05\"!\n\x06\x41lg_Id\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03\x61lg\x18\x02 \x01(\t2)\n\x06Runner\x12\x1f\n\x07RunTask\x12\x05.Task\x1a\r.Task_Results2\xcb\x01\n\x0eTask_Evaluator\x12-\n\rEvaluate_Task\x12\x05.Task\x1a\x15.Has_Results_Response\x12\x30\n\x0eResultResponse\x12\x0f.Result_Request\x1a\r.Task_Results\x12/\n\x15\x43onfigurationResponse\x12\x0f.Result_Request\x1a\x05.Task\x12\'\n\x10GetPinkSlipAlgId\x12\n.Pink_Slip\x1a\x07.Alg_Idb\x06proto3'
 )
 
 
@@ -103,6 +103,13 @@ _TASK = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='results', full_name='Task.results', index=10,
+      number=11, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -114,9 +121,14 @@ _TASK = _descriptor.Descriptor(
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
+    _descriptor.OneofDescriptor(
+      name='_results', full_name='Task._results',
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
   serialized_start=23,
-  serialized_end=243,
+  serialized_end=277,
 )
 
 
@@ -154,8 +166,8 @@ _RESULT_REQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=245,
-  serialized_end=304,
+  serialized_start=279,
+  serialized_end=338,
 )
 
 
@@ -198,8 +210,8 @@ _HAS_RESULTS_RESPONSE = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=306,
-  serialized_end=386,
+  serialized_start=340,
+  serialized_end=420,
 )
 
 
@@ -230,8 +242,8 @@ _TASK_RESULTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=388,
-  serialized_end=419,
+  serialized_start=422,
+  serialized_end=453,
 )
 
 
@@ -262,8 +274,8 @@ _PINK_SLIP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=421,
-  serialized_end=451,
+  serialized_start=455,
+  serialized_end=485,
 )
 
 
@@ -301,10 +313,13 @@ _ALG_ID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=453,
-  serialized_end=486,
+  serialized_start=487,
+  serialized_end=520,
 )
 
+_TASK.oneofs_by_name['_results'].fields.append(
+  _TASK.fields_by_name['results'])
+_TASK.fields_by_name['results'].containing_oneof = _TASK.oneofs_by_name['_results']
 _HAS_RESULTS_RESPONSE.oneofs_by_name['_pink_slip'].fields.append(
   _HAS_RESULTS_RESPONSE.fields_by_name['pink_slip'])
 _HAS_RESULTS_RESPONSE.fields_by_name['pink_slip'].containing_oneof = _HAS_RESULTS_RESPONSE.oneofs_by_name['_pink_slip']
@@ -367,8 +382,8 @@ _RUNNER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=488,
-  serialized_end=529,
+  serialized_start=522,
+  serialized_end=563,
   methods=[
   _descriptor.MethodDescriptor(
     name='RunTask',
@@ -393,8 +408,8 @@ _TASK_EVALUATOR = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=532,
-  serialized_end=735,
+  serialized_start=566,
+  serialized_end=769,
   methods=[
   _descriptor.MethodDescriptor(
     name='Evaluate_Task',

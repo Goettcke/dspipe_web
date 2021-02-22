@@ -19,7 +19,7 @@ from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
 from models import Todo, UserResult, UserPinkSlips, ResultCatalog
 from app import db, dc_full_dict, dc, datasets, dataset_meta_information
-from utils import get_html_table
+from utils import get_html_tables, task_to_pandas_dataframe
 
 main = Blueprint('main', __name__)
 
@@ -100,9 +100,7 @@ def get_parameters(parameter_dict):
 def run():
     """
     The most basic runner, which starts chewing through the database until it is empty - using knn_ldp
-    TODO 1. Allow different quality measures
-    TODO 2. Allow different classifiers
-    TODO 3. Different configurations of classifiers (parameters)
+    # Ensure that all methods can run without any parameters. For instance you have to specify an a and g for ls
     :return: None
     """
 
@@ -218,7 +216,7 @@ def profile():
 def results():
     tables = []
     all_parameters = []
-
+    import pandas as pd
     # 1. First we look through the pink slips
     pink_slip_query = UserPinkSlips.query.filter(UserPinkSlips.user_id == current_user.id).all()
     for pink_slip_instance in pink_slip_query:
@@ -242,17 +240,26 @@ def results():
     # 3. Then we run through the users results and call all the result configurations and result
     user_result_query = db.session.query(UserResult, ResultCatalog).filter(UserResult.user_id==current_user.id).all()
     #user_result_query = UserResult.query().filter(UserResult.user_id==current_user.id).join()
-
+    result_configurations = []
     for user_query_instance in user_result_query:
         print(user_query_instance)
         user_instance, res_cat_instance = user_query_instance
         print(f"Remote id: {res_cat_instance.remote_id}\n algorithm:{res_cat_instance.algorithm}")
         # Okay now we have the stuff then make the remote call.
         result_request = Result_Request(result_id=res_cat_instance.remote_id, algorithm_name=res_cat_instance.algorithm)
-        res_response = evaluators_client.ResultResponse(result_request)
-        print(res_response.results)
+        #res_response = evaluators_client.ResultResponse(result_request)
+        #print(res_response.results)
         config_response = evaluators_client.ConfigurationResponse(result_request)
         print(config_response.quality_measure)
+
+        result_configuration = task_to_pandas_dataframe(config_response)
+        result_configurations.append(result_configuration)
+
+    df = pd.DataFrame.from_records(result_configurations)
+
+
+    return render_template('results.html',tables=get_html_tables(df))
+
 
 
 

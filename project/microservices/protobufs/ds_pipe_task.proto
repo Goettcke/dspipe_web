@@ -11,6 +11,7 @@ message Task {
     float alpha = 8; 
     float gamma = 9; 
     string evaluation_method = 10; 
+    optional string results = 11; 
 }
 
 message Result_Request {

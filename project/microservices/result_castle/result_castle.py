@@ -340,7 +340,8 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
              percent_labelled = query_result.percent_labelled,
              alpha = get_alpha(request.algorithm_name),
              gamma = get_gamma(request.algorithm_name),
-             evaluation_method = query_result.evaluation_method
+             evaluation_method = query_result.evaluation_method,
+             results = query_result.result
              )
 
         session.commit()
@@ -385,7 +386,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
         elif lp_rbf_query != []:
             alg = "lp_rbf"
-            id_ = ls_rbf_query[0].id
+            id_ = lp_rbf_query[0].id
 
         elif ls_rbf_query != []:
             alg = "ls_rbf"
