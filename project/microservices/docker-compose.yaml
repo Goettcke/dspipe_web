@@ -1,0 +1,36 @@
+version: "3.3"
+services:
+
+    website:
+        build:
+            context: .
+            dockerfile: website/Dockerfile
+        environment:
+            EVALUATORS_HOST: result_castle
+        image: website
+        networks:
+            - microservices
+        ports:
+            - 5000:5000
+
+    result_castle:
+        build:
+            context: .
+            dockerfile: result_castle/Dockerfile
+        environment:
+            RUNNERS_HOST: runner
+        image: result_castle
+        networks:
+            - microservices
+
+    runner:
+        build:
+            context: .
+            dockerfile: runner/Dockerfile
+        image: runner
+        networks:
+            - microservices
+
+networks:
+    microservices:
+
