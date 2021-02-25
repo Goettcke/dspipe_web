@@ -21,6 +21,8 @@ spec:
                   env:
                       - name: EVALUATORS_HOST
                         value: result-castle
+            imagePullSecrets: 
+            - name: regcred
 
 ---
 apiVersion: apps/v1
@@ -45,6 +47,8 @@ spec:
                   env:
                       - name: RUNNERS_HOST
                         value: runner
+            imagePullSecrets: 
+            - name: regcred
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -65,6 +69,8 @@ spec:
             containers:
                 - name: runner
                   image: registry.internal.opgo.dk/goettcke/runner:latest
+            imagePullSecrets: 
+            - name: regcred
 
 ---
 apiVersion: v1
