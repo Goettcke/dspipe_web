@@ -1,4 +1,3 @@
-DS-Pipe @ file:///home/moller/git/private/ds_pipe_grpc/runner/DS_Pipe-0.0.2-py3-none-any.whl
 grpcio==1.35.0
 grpcio-tools==1.35.0
 joblib==1.0.1
