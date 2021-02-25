@@ -6,20 +6,20 @@ services:
             context: .
             dockerfile: website/Dockerfile
         environment:
-            EVALUATORS_HOST: result_castle
-        image: website
+            EVALUATORS_HOST: result-castle
+        image: registry.internal.opgo.dk/goettcke/website:latest
         networks:
             - microservices
         ports:
             - 5000:5000
 
-    result_castle:
+    result-castle:
         build:
             context: .
             dockerfile: result_castle/Dockerfile
         environment:
             RUNNERS_HOST: runner
-        image: result_castle
+        image: registry.internal.opgo.dk/goettcke/result-castle:latest
         networks:
             - microservices
 
@@ -27,7 +27,7 @@ services:
         build:
             context: .
             dockerfile: runner/Dockerfile
-        image: runner
+        image: registry.internal.opgo.dk/goettcke/runner:latest
         networks:
             - microservices
 

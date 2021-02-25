@@ -1,0 +1,112 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: website
+    labels:
+        app: website
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: website
+    template:
+        metadata:
+            labels:
+                app: website
+        spec:
+            containers:
+                - name: website
+                  image: registry.internal.opgo.dk/goettcke/website:latest
+                  env:
+                      - name: EVALUATORS_HOST
+                        value: result-castle
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: result-castle
+    labels:
+        app: result-castle
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: result-castle
+    template:
+        metadata:
+            labels:
+                app: result-castle
+        spec:
+            containers:
+                - name: result-castle
+                  image: registry.internal.opgo.dk/goettcke/result-castle:latest
+                  env:
+                      - name: RUNNERS_HOST
+                        value: runner
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: runner
+    labels:
+        app: runner
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: runner
+    template:
+        metadata:
+            labels:
+                app: runner
+        spec:
+            containers:
+                - name: runner
+                  image: registry.internal.opgo.dk/goettcke/runner:latest
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: website
+spec:
+    type: LoadBalancer
+    selector:
+        app: website
+    ports:
+        - protocol: TCP
+          port: 5000
+          targetPort: 5000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: result-castle
+spec:
+    selector:
+        app: result-castle
+    ports:
+        - name: website
+          protocol: TCP
+          port: 50050
+          targetPort: 50050
+        - name: runner
+          protocol: TCP
+          port: 50051
+          targetPort: 50051
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: runner
+spec:
+    selector:
+        app: runner
+    ports:
+        - protocol: TCP
+          port: 50051
+          targetPort: 50051
