@@ -6,7 +6,7 @@ metadata:
     labels:
         app: website
 spec:
-    replicas: 3
+    replicas: 1
     selector:
         matchLabels:
             app: website
@@ -32,7 +32,7 @@ metadata:
     labels:
         app: result-castle
 spec:
-    replicas: 2
+    replicas: 1
     selector:
         matchLabels:
             app: result-castle
@@ -57,7 +57,7 @@ metadata:
     labels:
         app: runner
 spec:
-    replicas: 2
+    replicas: 1
     selector:
         matchLabels:
             app: runner
@@ -83,8 +83,8 @@ spec:
         app: website
     ports:
         - protocol: TCP
-          port: 5000
-          targetPort: 5000
+          port: 80
+          targetPort: 80
 
 ---
 apiVersion: v1

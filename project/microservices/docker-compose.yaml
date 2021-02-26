@@ -11,7 +11,7 @@ services:
         networks:
             - microservices
         ports:
-            - 5000:5000
+            - 80:80
 
     result-castle:
         build:
@@ -30,6 +30,20 @@ services:
         image: registry.internal.opgo.dk/goettcke/runner:latest
         networks:
             - microservices
+
+#    website_nginx:
+#        build:
+#            context: website_using_nginx/
+#            dockerfile: Dockerfile
+#       environment:
+#            EVALUATORS_HOST: result-castle
+#        image: registry.internal.opgo.dk/goettcke/website_nginx:latest
+#        networks:
+#           - microservices
+#        volumes: 
+#            - ./app:/app
+#       ports:
+#           - "80:80"
 
 networks:
     microservices:

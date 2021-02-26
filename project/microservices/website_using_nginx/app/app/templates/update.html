@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Task Master</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Update Task</h1>
+
+    <div class="form">
+        <form action="/update/{{task.id}}" method="POST">
+            <input type="text" name="algorithm" id="algorithm" value="{{task.algorithm}}">
+            <input type="text" name="dataset_name" id="dataset_name" value="{{task.dataset_name}}">
+            <input type="text" name="q_measure" id="q_measure" value="{{task.q_measure}}">
+            <input type="text" name="percent_labelled" id="percent_labelled" value="{{task.per}}">
+            <input type="text" name="number_of_samples" id="number_of_samples" value="{{task.number_of_samples}}">
+            <input type="text" name="parameters" id="parameters" value="{{task.parameters}}">
+            <input type="submit" value="Update">
+        </form>
+    </div>
+</div>
+{% endblock %}
