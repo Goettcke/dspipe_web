@@ -255,7 +255,6 @@ def results():
         #res_response = evaluators_client.ResultResponse(result_request)
         #print(res_response.results)
         config_response = evaluators_client.ConfigurationResponse(result_request)
-        #print(config_response.quality_measure)
 
         result_configuration = task_to_pandas_dataframe(config_response)
         result_configurations.append(result_configuration)

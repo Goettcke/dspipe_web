@@ -293,6 +293,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
         query_result = session_query.filter_by(id=request.result_id).first()
         results = ast.literal_eval(query_result.result)
+
         session.commit()
         session.close()
 
@@ -341,7 +342,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
              alpha = get_alpha(request.algorithm_name),
              gamma = get_gamma(request.algorithm_name),
              evaluation_method = query_result.evaluation_method,
-             results = query_result.result
+             results = str([round(x, 3) for x in ast.literal_eval(query_result.result)])
              )
 
         session.commit()

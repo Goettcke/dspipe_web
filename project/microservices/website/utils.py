@@ -10,7 +10,8 @@ def task_to_pandas_dataframe(task):
         "percent_labelled": task.percent_labelled,
         "alpha": task.alpha,
         "gamma": task.gamma,
-        "evaluation_method": task.evaluation_method
+        "evaluation_method": task.evaluation_method,
+        "results": task.results
     }
 
     #return pd.DataFrame(task_dict)
@@ -54,7 +55,6 @@ def split_df(df):
     assert len(number_of_samples_set) > 0
     assert len(evaluation_methods_set) > 0
     assert len(percent_labelled_set) > 0
-
     sub_dfs = []
     warnings.simplefilter(action="ignore", category=UserWarning)
     for quality_measure, number_of_samples, evaluation_method, percent_labelled in product(q_measure_set, number_of_samples_set, evaluation_methods_set, percent_labelled_set):
@@ -99,22 +99,15 @@ def get_html_tables(df):
     data_frames = split_df(df)
     tables = []
     for df_ in data_frames:
-        """
         div_top = "<div class = 'container'>\n"
 
-        table_head = f"<div class='row'>  <table class = 'table table-striped table-dark'>\n  <thead> \n   <tr>\n <th scope='col'>algorithm</th> <th scope='col'>Number of samples</th>  <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'></th>  </tr></thead></div> \n"
+    #    table_head = f"<div class='row'>  <table class = 'table table-striped table-dark'>\n  <thead> \n   <tr>\n <th scope='col'>algorithm</th> <th scope='col'>Number of samples</th> <th scope='col'>Dataset</th><th scope='col'>n_neighbors</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>alpha</th><th scope='col'>gamma</th><th scope='col'>Results</th>  </tr></thead></div> \n"
 
-        df_ = df.multiply(100)
-        df_ = df.round(2)
 
         table_content = df_.to_html(classes = "table table-striped", header=True)
         #return div_top + heading + "<div class='row'>\n" + table + "</div>\n</div> <hr/>\n"
         div_bottom = "</div>\n</div> <hr/>\n"
-        table = div_top + table_head +  "<div class='row'>\n" + table_content + div_bottom
-        tables.append(table)
-        """ 
-        table = df_.to_html(classes = "table table-striped", header=True)
-        print(df_)
+        table = div_top + "<div class='row'>\n" + table_content + div_bottom
         tables.append(table)
     return tables
 
