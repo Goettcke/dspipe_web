@@ -93,6 +93,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         session = Session(bind=conn)
         has_result = False
         pink_slip = 0
+        id = 0
         if request.algorithm == "knn_ldp":
             session_query = session.query(Knn_ldp)
             query_list = self.get_query_list(session_query, request, ["n_neighbors"])
@@ -129,12 +130,13 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
             print("Result lies in the database")
             has_result = True
+            id = query_list[0].id
             #print(query_list[0].result)
             #result = ast.literal_eval(query_list[0].result)
 
         session.commit()
         session.close()
-        return has_result, pink_slip
+        return has_result, pink_slip, id, request.algorithm
 
     def run_request(self, request, pink_slip):
         conn = engine.connect()
@@ -248,14 +250,13 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         session.close()
 
     def Evaluate_Task(self, request, context):
-        print("something farty")
         has_result = False
         try:
-            has_result, pink_slip = self.find_request(request)
+            has_result, pink_slip, id, alg = self.find_request(request)
             print("Got has result")
 
             if has_result:
-                response = Has_Results_Response(has_result = has_result)
+                response = Has_Results_Response(has_result = has_result, pink_slip=0, result_id=id, algorithm_name=alg )
 
             elif has_result == False:
                 response = Has_Results_Response(has_result = has_result, pink_slip=pink_slip)
@@ -266,7 +267,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
             has_result = None
         return response
 
-
+    
     # CamelCased to denote RPC call
     def ResultResponse(self, request, context):
         conn = engine.connect()

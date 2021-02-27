@@ -1,7 +1,8 @@
 import pandas as pd
 
-def task_to_pandas_dataframe(task):
+def task_to_pandas_dataframe(task, id):
     task_dict = {
+        "id": id, 
         "algorithm": task.algorithm,
         "number_of_samples": task.number_of_samples,
         "dataset": task.dataset_name,
@@ -65,50 +66,15 @@ def split_df(df):
             sub_dfs.append(sub_df)
     return sub_dfs
 
-"""
-def split_df(df):
-    import warnings
-    from itertools import product
-
-    # Find all types of quality measures
-    algorithm_set = set(df['algorithm'])
-    
-    q_measure_set = set(df['quality_measure'])
-
-    # Find all number_of samples
-    number_of_samples_set = set(df['number_of_samples'])
-
-    evaluation_methods_set = set(df['evaluation_method'])
-
-    percent_labelled_set = set(df['percent_labelled'])
-
-    assert len(q_measure_set) > 0
-    assert len(number_of_samples_set) > 0
-    assert len(evaluation_methods_set) > 0
-    assert len(percent_labelled_set) > 0
-
-    sub_dfs = []
-    warnings.simplefilter(action="ignore", category=UserWarning)
-    for algorithm in algorithm_set: 
-        sub_df = df[df.algorithm == algorithm]
-        sub_dfs.append(sub_df)
-    return sub_dfs
-"""
 
 def get_html_tables(df):
     data_frames = split_df(df)
     tables = []
     for df_ in data_frames:
-        div_top = "<div class = 'container'>\n"
-
     #    table_head = f"<div class='row'>  <table class = 'table table-striped table-dark'>\n  <thead> \n   <tr>\n <th scope='col'>algorithm</th> <th scope='col'>Number of samples</th> <th scope='col'>Dataset</th><th scope='col'>n_neighbors</th> <th scope='col'>Quality measure</th> <th scope='col'>Percent labelled</th> <th scope='col'>alpha</th><th scope='col'>gamma</th><th scope='col'>Results</th>  </tr></thead></div> \n"
-
-
         table_content = df_.to_html(classes = "table table-striped", header=True)
         #return div_top + heading + "<div class='row'>\n" + table + "</div>\n</div> <hr/>\n"
-        div_bottom = "</div>\n</div> <hr/>\n"
-        table = div_top + "<div class='row'>\n" + table_content + div_bottom
-        tables.append(table)
+        tables.append(table_content)
     return tables
 
 
