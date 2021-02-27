@@ -42,4 +42,5 @@ class UserPinkSlips(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     user_id = db.Column(db.Integer, ForeignKey("user.id"))
     pink_slip = db.Column(db.Integer, nullable=False)
+    creation_time = db.Column(db.DateTime, default=datetime.utcnow)
 

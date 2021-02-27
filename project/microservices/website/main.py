@@ -224,7 +224,7 @@ def results():
         response = evaluators_client.GetPinkSlipAlgId(alg_id_request)
         id_ = response.id
         alg = response.alg
-        if id_ != -1: # The result castle doesn't have the results for the test yet
+        if id_ != -1: # The result castle have the results for the test
             result_catalog_instance = ResultCatalog(remote_id=id_, algorithm=alg)
             db.session.add(result_catalog_instance)
             db.session.commit()
@@ -235,22 +235,27 @@ def results():
             user_result_instance = UserResult(result_id=result_catalog_instance.id, user_id=current_user.id)
             db.session.add(user_result_instance)
             db.session.commit()
+        else: # meaning, that the result might still be computed
+            time_since_created = datetime.utcnow() - pink_slip_instance.creation_time
+            if time_since_created.seconds > 10: 
+                db.session.delete(pink_slip_instance) # interesting if these are accumulating anyway
+        # Here we should make an if, that removes pink slips, if they are more than 24 hours old.
 
 
     # 3. Then we run through the users results and call all the result configurations and result
-    user_result_query = db.session.query(UserResult, ResultCatalog).filter(UserResult.user_id==current_user.id).all()
+    user_result_query = db.session.query(UserResult, ResultCatalog).join(UserResult).filter(UserResult.user_id==current_user.id).all()
     #user_result_query = UserResult.query().filter(UserResult.user_id==current_user.id).join()
     result_configurations = []
     for user_query_instance in user_result_query:
-        print(user_query_instance)
+        #print(user_query_instance)
         user_instance, res_cat_instance = user_query_instance
-        print(f"Remote id: {res_cat_instance.remote_id}\n algorithm:{res_cat_instance.algorithm}")
+        #print(f"Remote id: {res_cat_instance.remote_id}\n algorithm:{res_cat_instance.algorithm}")
         # Okay now we have the stuff then make the remote call.
         result_request = Result_Request(result_id=res_cat_instance.remote_id, algorithm_name=res_cat_instance.algorithm)
         #res_response = evaluators_client.ResultResponse(result_request)
         #print(res_response.results)
         config_response = evaluators_client.ConfigurationResponse(result_request)
-        print(config_response.quality_measure)
+        #print(config_response.quality_measure)
 
         result_configuration = task_to_pandas_dataframe(config_response)
         result_configurations.append(result_configuration)
