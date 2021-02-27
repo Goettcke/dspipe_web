@@ -1,6 +1,6 @@
 FROM tiangolo/uwsgi-nginx-flask:python3.8
 
-
+EXPOSE 50050
 COPY ./app /app
 RUN python -m pip install --upgrade pip
 RUN python -m pip install -r /app/requirements.txt

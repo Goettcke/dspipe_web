@@ -5,6 +5,8 @@ services:
       - ./app:/app
     ports:
       - "80:80"
+      - "50050:50050"
+      - "50051:50051"
     environment:
       - FLASK_APP=app/main.py
       - FLASK_DEBUG=1
