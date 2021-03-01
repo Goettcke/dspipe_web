@@ -64,6 +64,7 @@ class Ls_rbf(Base):
     alpha = Column(Float)
     quality_measure = Column(String)
     evaluation_method = Column(String)
+    result = Column(String)
     pink_slip = Column(Integer)
 
 

@@ -94,6 +94,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
         has_result = False
         pink_slip = 0
         id = 0
+        print(f"The requested algorithm: {request.algorithm}")
         if request.algorithm == "knn_ldp":
             session_query = session.query(Knn_ldp)
             query_list = self.get_query_list(session_query, request, ["n_neighbors"])

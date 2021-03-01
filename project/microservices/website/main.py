@@ -120,17 +120,18 @@ def run():
 
 
                 if task.algorithm == "ls":
+                    print("The task is indeed ls")
                     if "k" in parameter_dict.keys():
                         algorithm = "ls_knn"
                     else:
                         algorithm = "ls_rbf"
 
-                if task.algorithm == "lp":
+                elif task.algorithm == "lp":
                     if "k" in parameter_dict.keys():
                         algorithm = "lp_knn"
                     else:
                         algorithm = "lp_rbf"
-                else:
+                else: 
                     algorithm = "knn_ldp"
 
                 parameter_value_dict = get_parameters(parameter_dict)
@@ -172,9 +173,7 @@ def run():
                 f = open(error_log, "a+")
                 f.write(f"{task.dataset_name} not in datasets,{datetime.utcnow()}\n")
                 f.close()
-
-
-        delete(task.id)
+            delete(task.id)
         print(f"Total requests: {len(tasks)}\nWe have {number_of_ready_results} ready and {len(tasks) - number_of_ready_results} are being processed")
         return redirect(url_for('main.profile'))
 
