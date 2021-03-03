@@ -1,8 +1,8 @@
 #test_with_pytest.py
-import pytest 
+import pytest
 
-#Tests if the testing system works, by running a test, that should always be true. 
-def test_uppercase(): 
+#Tests if the testing system works, by running a test, that should always be true.
+def test_uppercase():
     assert "loud noises".upper() == "LOUD NOISES"
 
 def test_imports():
@@ -11,17 +11,16 @@ def test_imports():
     import sqlalchemy
     import flask_login
 
-def test_datasets(): 
+def test_datasets():
     from ds_pipe.datasets.dataset_loader import Dataset_Collections
     dc = Dataset_Collections()
     dc_full_dict = dc.get_full_dictionary()
     print(len(dc_full_dict.keys()))
     assert len(dc_full_dict['iris'].target) == 150
-    # Here we could be more thorough, and check that all the datasets were the correct length. 
+    # Here we could be more thorough, and check that all the datasets were the correct length.
 
 
-def test_algorithm(): 
-    from ds_pipe.datasets.dataset_loader import Dataset_Collections
+def test_algorithm():
     from ds_pipe.datasets.dataset_loader import Dataset_Collections
     from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
     from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP

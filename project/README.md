@@ -32,11 +32,9 @@ In this project a minimalistic website will be created to try out some of the im
 The developer of the systems has to:
 * Use continuous integration and deployment &#x2611;
 * Infrastructure as a Code with an automatic DevOps pipeline &#x2611;
-* Scalable, supporting multiple users exploiting if needed more resources in the cloud
+* Scalable, supporting multiple users exploiting if needed more resources in the cloud &#x2611;
 * Enforce number of compute hours used per user
 * Build a set of unit tests for CI / CD &#x2611;
-* Security (proper credential management and common standard security practices enforced, the evaluation of the docker must not tamper with the remaining part of the system since potentially the code of the students is non trusted) 
-    * This is  not applicable - since it most likely comes from the autograder assignment
 * Provide minimal documentation to deploy and run the system
 
 ## Microservices 
