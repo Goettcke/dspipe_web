@@ -10,6 +10,12 @@ dc_full_dict = dc.get_full_dictionary()
 datasets = dc.keel_datasets() + dc.chapelle_datasets()
 dataset_meta_information = [(dataset_name,  len(dataset.data[0]), len(dataset.target)) for dataset, dataset_name in datasets]
 
+supported_algorithms = ["lp", "knn_ldp", "ls"]
+supported_quality_measures = ["accuracy", "recall", "precision", "f1"]
+supported_datasets = [dataset_name for _, dataset_name in datasets]
+
+
+
 # Setting the DB
 db = SQLAlchemy()
 

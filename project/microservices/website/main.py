@@ -1,7 +1,7 @@
 import os
 import sys
 from time import sleep
-from flask import render_template, url_for, request, redirect, Blueprint, send_file
+from flask import render_template, url_for, request, redirect, Blueprint, send_file, flash
 from flask_login import current_user, login_required
 from datetime import datetime
 
@@ -18,8 +18,8 @@ from ds_pipe_task_pb2 import (# importing the messages
 from ds_pipe.evaluation.evaluation_methods import random_sampling_evaluator
 from ds_pipe.semi_supervised_classifiers.kNN_LDP import kNN_LDP
 from models import Todo, UserResult, UserPinkSlips, ResultCatalog
-from app import db, dc_full_dict, dc, datasets, dataset_meta_information
-from utils import get_html_tables, task_to_pandas_dataframe
+from app import db, dc_full_dict, dc, datasets, dataset_meta_information, supported_algorithms, supported_quality_measures, supported_datasets
+from utils import get_html_tables, task_to_pandas_dataframe, get_parameter_dict, get_parameters, check_parameters
 
 main = Blueprint('main', __name__)
 
@@ -55,44 +55,18 @@ def update(id):
         task.number_of_samples = request.form['number_of_samples']
         task.parameters = request.form['parameters']
 
-        #TODO check if this format can run before submitting it. Return an error page with instructions on what you can run.
-
-        try:
-            db.session.commit()
-            return redirect(url_for('main.profile'))
-        except Exception as e:
-            print(e)
-            return 'There was an issue updating your task'
+        parameters_check_out = check_parameters(algorithm=task.algorithm, dataset_name=task.dataset_name, q_measure=task.q_measure, number_of_samples=task.number_of_samples, percent_labelled=task.per, parameters=task.parameters)
+        if parameters_check_out:  
+            try:
+                db.session.commit()
+                return redirect(url_for('main.profile'))
+            except Exception as e:
+                print(e)
+                return 'There was an issue updating your task'
+        else: 
+            return render_template('update.html', task=task)
     else:
         return render_template('update.html', task=task)
-
-def get_parameters(parameter_dict):
-    parameter_value_dict = {}
-    if "k" in parameter_dict.keys():
-        parameter_value_dict["n_neighbors"] = int(parameter_dict["k"])
-
-    elif "n_neighbors" in parameter_dict.keys():
-        parameter_value_dict["n_neighbors"] = int(parameter_dict["n_neighbors"])
-    else:
-        parameter_value_dict["n_neighbors"] = 10
-
-    if "g" in parameter_dict.keys():
-        parameter_value_dict["gamma"] = float(parameter_dict["g"])
-
-    elif "gamma" in parameter_dict.keys():
-        parameter_value_dict["gamma"] = float(parameter_dict["gamma"])
-    else:
-        parameter_value_dict["gamma"] = 20
-
-    if "a" in parameter_dict.keys():
-        parameter_value_dict["alpha"] = float(parameter_dict["a"])
-
-    elif "alpha" in parameter_dict.keys():
-        parameter_value_dict["alpha"] = float(parameter_dict["alpha"])
-    else:
-        parameter_value_dict["alpha"] = 0.2
-
-    return parameter_value_dict
 
 
 
@@ -112,13 +86,10 @@ def run():
             if task.dataset_name in dc_full_dict.keys():
 
                 # Setting up the parameters.
-                parameter_dict = {}
-                parameters = task.parameters.split(" ")
-                for parameter in parameters:
-                    k,v = parameter.split("=")
-                    parameter_dict[k] = v
-
-
+                parameter_dict = get_parameter_dict(task.parameters)
+                parameter_value_dict = get_parameters(parameter_dict)
+                
+                # Setting up the right names for the result castle. (This is done to make the setup more intuitive for the end user.)
                 if task.algorithm == "ls":
                     print("The task is indeed ls")
                     if "k" in parameter_dict.keys():
@@ -134,7 +105,6 @@ def run():
                 else: 
                     algorithm = "knn_ldp"
 
-                parameter_value_dict = get_parameters(parameter_dict)
 
                 task_request = Task(
                     user_id = current_user.id,
@@ -193,22 +163,59 @@ def profile():
         parameters = request.form['parameters']
 
         # Check add the form check here! Or add javascript to check the form before it is submitted
+        """
 
-        new_task = Todo(algorithm = algorithm,
-                        q_measure = q_measure,
-                        dataset_name=dataset_name,
-                        per=percent_labelled,
-                        number_of_samples=number_of_samples,
-                        user_id=current_user.id,
-                        parameters=parameters)
-        try:
-            db.session.add(new_task)
-            db.session.commit()
+        parameters_check_out= True
+        if algorithm not in supported_algorithms: 
+            parameters_check_out = False
+            flash(f"algorithm: {algorithm} is not supported pick, one from {supported_algorithms}")
+
+        if dataset_name not in supported_datasets: 
+            parameters_check_out = False
+            flash(f"dataset: {dataset_name} is not supported pick, one from {supported_datasets}")
+
+        if q_measure not in supported_quality_measures: 
+            parameters_check_out = False
+            flash(f"quality measure: {q_measure} is not supported, pick one from {supported_quality_measures}")
+
+        if number_of_samples != "": 
+            if int(number_of_samples) < 1 or int(number_of_samples) > 100: 
+                parameters_check_out = False
+                flash(f"number of samples: {number_of_samples} is not supported, pick a number between 1 and 100")
+        else: 
+            parameters_check_out = False
+            flash(f"number of samples cannot be empty!")
+
+        if percent_labelled != "": 
+            if int(percent_labelled) < 1 or int(percent_labelled) > 99: 
+                parameters_check_out = False
+                flash(f"percent_labelled: {percent_labelled} is not supported, pick a number between 1 and 99")
+        else: 
+            parameters_check_out = False
+            flash(f"percent_labelled cannot be empty!")
+        """
+
+        parameters_check_out = check_parameters(algorithm=algorithm, dataset_name=dataset_name, q_measure=q_measure, number_of_samples=number_of_samples, percent_labelled=percent_labelled, parameters=parameters)            
+
+        if not parameters_check_out:  
             return redirect(url_for('main.profile'))
 
-        except Exception as e:
-            print(e)
-            return 'There was an issue adding your task'
+        else: 
+            new_task = Todo(algorithm = algorithm,
+                            q_measure = q_measure,
+                            dataset_name=dataset_name,
+                            per=percent_labelled,
+                            number_of_samples=number_of_samples,
+                            user_id=current_user.id,
+                            parameters=parameters)
+            try:
+                db.session.add(new_task)
+                db.session.commit()
+                return redirect(url_for('main.profile'))
+
+            except Exception as e:
+                print(e)
+                return 'There was an issue adding your task'
 
     else:
         tasks = Todo.query.filter(Todo.user_id == current_user.id).order_by(Todo.date_created).all()
@@ -279,20 +286,6 @@ def results():
         return render_template('results.html',tables=get_html_tables(df))
 
 
-
-
-
-
-    """
-    old method used for generating html tables to serve to the front end
-    for result_file in result_files:
-        tables.append(get_html_table(user_folder + result_file))
-
-    return render_template('results.html', tables=tables)
-    """
-
-    return "Hej!"
-
 @main.route('/admin_panel')
 @login_required
 def admin_panel():
@@ -305,4 +298,5 @@ def admin_panel():
 @login_required
 def greet():
     return render_template("example_profile_page.html", name=current_user.name)
+
 

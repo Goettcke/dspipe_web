@@ -44,7 +44,17 @@
 
     {% block head %}{% endblock %}
 </head>
+
 <body>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul class=list-group>
+          {% for message in messages %}
+            <li class='list-group-item list-group-item-danger'>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {% endif %}
+    {% endwith %}
     {% block body %}{% endblock %}
 </body>
 </html>
