@@ -162,39 +162,6 @@ def profile():
         number_of_samples = request.form['number_of_samples']
         parameters = request.form['parameters']
 
-        # Check add the form check here! Or add javascript to check the form before it is submitted
-        """
-
-        parameters_check_out= True
-        if algorithm not in supported_algorithms: 
-            parameters_check_out = False
-            flash(f"algorithm: {algorithm} is not supported pick, one from {supported_algorithms}")
-
-        if dataset_name not in supported_datasets: 
-            parameters_check_out = False
-            flash(f"dataset: {dataset_name} is not supported pick, one from {supported_datasets}")
-
-        if q_measure not in supported_quality_measures: 
-            parameters_check_out = False
-            flash(f"quality measure: {q_measure} is not supported, pick one from {supported_quality_measures}")
-
-        if number_of_samples != "": 
-            if int(number_of_samples) < 1 or int(number_of_samples) > 100: 
-                parameters_check_out = False
-                flash(f"number of samples: {number_of_samples} is not supported, pick a number between 1 and 100")
-        else: 
-            parameters_check_out = False
-            flash(f"number of samples cannot be empty!")
-
-        if percent_labelled != "": 
-            if int(percent_labelled) < 1 or int(percent_labelled) > 99: 
-                parameters_check_out = False
-                flash(f"percent_labelled: {percent_labelled} is not supported, pick a number between 1 and 99")
-        else: 
-            parameters_check_out = False
-            flash(f"percent_labelled cannot be empty!")
-        """
-
         parameters_check_out = check_parameters(algorithm=algorithm, dataset_name=dataset_name, q_measure=q_measure, number_of_samples=number_of_samples, percent_labelled=percent_labelled, parameters=parameters)            
 
         if not parameters_check_out:  
@@ -281,9 +248,12 @@ def results():
 
             result_configuration = task_to_pandas_dataframe(config_response, id=user_instance.id)
             result_configurations.append(result_configuration)
-
-        df = pd.DataFrame.from_records(result_configurations).set_index("id")
-        return render_template('results.html',tables=get_html_tables(df))
+        if result_configurations != []: 
+            df = pd.DataFrame.from_records(result_configurations).set_index("id")
+            return render_template('results.html',tables=get_html_tables(df))
+        else: 
+            # Unfortunately there is no results ready for the user
+            return render_template("example_profile_page.html", name=current_user.name, greeting="Ahh! Unfortunately we don't have any results ready for you :(")
 
 
 @main.route('/admin_panel')

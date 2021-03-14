@@ -9,6 +9,9 @@
 {% block body %}
 <div class="container-fluid">
     <h1 style="text-align: center">DS_Pipe Task Scheduler</h1>
+    
+
+    
     {% if tasks|length < 1 %}
     <h4 style="text-align: center">There are no tasks. Create one below!</h4>
     {% else %}
@@ -54,15 +57,16 @@
                 </div>
 
                 <div class="col-">
-                <label for="q_measure" class="form-label"></label>
-                <input type="text" class="form-control" name="q_measure" id="q_measure" placeholder="Quality measure">
+                <label for="dataset_name" class="form-label"></label>
+                <input type="text" class="form-control" name="dataset_name" id="dataset_name" placeholder="Dataset">
                 </div>
 
 
                 <div class="col-">
-                <label for="dataset_name" class="form-label"></label>
-                <input type="text" class="form-control" name="dataset_name" id="dataset_name" placeholder="Dataset">
+                <label for="q_measure" class="form-label"></label>
+                <input type="text" class="form-control" name="q_measure" id="q_measure" placeholder="Quality measure">
                 </div>
+
 
                 <div class="col-">
                 <label for="percent_labelled" class="form-label"></label>
@@ -83,17 +87,18 @@
                 
                 </form>
 
-                <div class="col-">
-                <form action="/run" method="POST">
-                    <button type="submit" class="btn btn-success" value="Run">Run</button>
-                </form>
-                </div>
-
             </div>
-
+            
         </div>
+    
 </div>
-
+<div class="w-100 p-1">
+    <div class="d-flex justify-content-center">
+        <form action="/run" method="POST">
+            <button type="submit" class="btn btn-success" value="Run">Execute all scheduled tasks</button>
+        </form>
+    </div>
+</div>
 
 
 
