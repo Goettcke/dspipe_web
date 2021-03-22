@@ -14,8 +14,8 @@ spec:
       - backend:
           serviceName: argocd-server
           servicePort: http
-    host: argocd.example.com
+    host: argocd.dspipe.xyz
   tls:
   - hosts:
-    - argocd.example.com
+    - argocd.dspipe.xyz
     secretName: argocd-secret # do not change, this is provided by Argo CD
