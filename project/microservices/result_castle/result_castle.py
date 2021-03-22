@@ -45,7 +45,7 @@ class ResultCastleService(ds_pipe_task_pb2_grpc.Task_EvaluatorServicer):
 
         except Exception as e:
             print(e)
-            print("Aww why this no work")
+            print("Unfortunately the request couldn't execute")
 
         return result
 
