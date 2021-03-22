@@ -1,20 +1,21 @@
-apiVersion: getambassador.io/v2
-kind: Mapping
+apiVersion: extensions/v1beta1
+kind: Ingress
 metadata:
-  name: argocd-server-ui
+  name: argocd-server-http-ingress
   namespace: argocd
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
-  host: argocd.dspipe.xyz
-  prefix: /
-  service: argocd-server:443
----
-apiVersion: getambassador.io/v2
-kind: Mapping
-metadata:
-  name: argocd-server-cli
-  namespace: argocd
-spec:
-  host: argocd.example.com:443
-  prefix: /
-  service: argocd-server:443
-
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: argocd-server
+          servicePort: http
+    host: argocd.example.com
+  tls:
+  - hosts:
+    - argocd.example.com
+    secretName: argocd-secret # do not change, this is provided by Argo CD
