@@ -7,16 +7,16 @@ In this project a minimalistic website will be created to try out some of the im
 **A user can**:
 * Login to the website and make a new user  &#x2611;
 * Login to a web interface &#x2611;
-* Upload a dataset  
+* Upload a dataset &#x2612; (GDPR issues)
 * View all of the datasets currently available in the package &#x2611;
-* Choose one of the existing algorithms in the ds_pipe package and apply it to a dataset, possibly in parallel &#x2611; Can so far only handle KNN LDP
+* Choose one of the existing algorithms in the ds_pipe package and apply it to a dataset, possibly in parallel &#x2611;
 * Choose one of the existing semi supervised learning algorithms from the **Scikit-Learn** library and apply it using the same interface as the algorithms from the ds_pipe package, possibly parallelizing the tasks &#x2612;
 * See the class assignments for each of the query points. &#x2612;
 * Set percentage of unlabelled data points in the dataset &#x2611;
 * Set the number of random samples for empirical performance evaluation &#x2611;
 * See a pairplot of the class assignments &#x2612;
-* Evaluate the performance of the algorithm with above configuration using *accuracy*, *precision*, *recall* and *f1* quality measures. 
-* Save the results from the classification for later retrieval
+* Evaluate the performance of the algorithm with above configuration using *accuracy*, *precision*, *recall* and *f1* quality measures. &#x2611;
+* Save the results from the classification for later retrieval &#x2611;
 
 ## Administration 
 **The administrator shall be able to**: 
@@ -35,12 +35,12 @@ The developer of the systems has to:
 * Scalable, supporting multiple users exploiting if needed more resources in the cloud &#x2611;
 * Enforce number of compute hours used per user
 * Build a set of unit tests for CI / CD &#x2611;
-* Provide minimal documentation to deploy and run the system
+* Provide minimal documentation to deploy and run the system &#x2611;
 
 ## Microservices 
 Several microservices are needed for this project. The classification object containers will for larger datasets using more samples require as many running containers as their are datasets * random samples * algorithms running at any point in time. For a single user, some of these tests can take hours even if run in parallel. Therefore the user login is required, so the user can return and get the results.
 
-1. A service which takes a test configuration and a dataset, and generates the predictions.
+1. A service which takes a test configuration and a dataset, and generates the predictions. 
 2. Plotting service, which takes a set of data points and their corresponding labels, and produces a pairplot (matrix plot). 
 3. An evaluation service, which takes the set of predictions and the set of correct labels, and outputs the final evaluation. 
 

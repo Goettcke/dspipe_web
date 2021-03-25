@@ -4,6 +4,7 @@ metadata:
   name: minimal-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-passthrough: --enable-ssl-passthrough
 spec:
   rules:
   - host: dspipe.xyz
