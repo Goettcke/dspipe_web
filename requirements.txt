@@ -9,7 +9,7 @@ Flask-SQLAlchemy==2.4.4
 iniconfig==1.1.1
 itsdangerous==1.1.0
 Jinja2==2.11.2
-joblib==1.0.0
+joblib==1.2.0
 MarkupSafe==1.1.1
 numpy==1.19.5
 packaging==20.9
